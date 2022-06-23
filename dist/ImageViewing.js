@@ -51,7 +51,6 @@ function ImageViewing({ images, keyExtractor, imageIndex, visible, onRequestClos
                     offset: SCREEN_WIDTH * index,
                     index,
                 })}
-                initialNumToRender={1}
                 renderItem={({ item: imageSrc }) => (
                     <ImageItem onZoom={onZoom} currentImageIndex={currentImageIndex} images={images} imageSrc={imageSrc} onRequestClose={onRequestCloseEnhanced} onLongPress={onLongPress} delayLongPress={delayLongPress} swipeToCloseEnabled={swipeToCloseEnabled} doubleTapToZoomEnabled={doubleTapToZoomEnabled} />)} onMomentumScrollEnd={onScroll}
                 //@ts-ignore
