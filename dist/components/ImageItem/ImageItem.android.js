@@ -11,12 +11,13 @@ import useImageDimensions from "../../hooks/useImageDimensions";
 import usePanResponder from "../../hooks/usePanResponder";
 import { getImageStyles, getImageTransform } from "../../utils";
 import { ImageLoading } from "./ImageLoading";
+import Video from 'react-native-video';
 const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.75;
 const SCREEN = Dimensions.get("window");
 const SCREEN_WIDTH = SCREEN.width;
 const SCREEN_HEIGHT = SCREEN.height;
-const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPress, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, }) => {
+const ImageItem = ({ imageSrc, onZoom, currentImageIndex, images, onRequestClose, onLongPress, delayLongPress, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, }) => {
     const imageContainer = useRef(null);
     const imageDimensions = useImageDimensions(imageSrc);
     const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
@@ -68,8 +69,19 @@ const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPre
         onScroll,
         onScrollEndDrag,
     })}>
-      <Animated.Image {...panHandlers} source={imageSrc} style={imageStylesWithOpacity} onLoad={onLoaded}/>
-      {(!isLoaded || !imageDimensions) && <ImageLoading />}
+        {imageSrc.media_type != "VIDEO" ?
+            <Animated.Image {...panHandlers} source={imageSrc} style={imageStylesWithOpacity} onLoad={onLoaded} />
+            :
+            <Video
+                repeat
+                source={imageSrc}
+                resizeMode={"contain"}
+                style={styles.listItem}
+                onReadyForDisplay={onLoaded}
+                paused={images[currentImageIndex].story_id != imageSrc.story_id}
+            />
+        }
+        {(!isLoaded || !imageDimensions) && <ImageLoading />}
     </ScrollView>);
 };
 const styles = StyleSheet.create({
