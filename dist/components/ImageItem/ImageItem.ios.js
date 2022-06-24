@@ -21,6 +21,7 @@ const ImageItem = ({ imageSrc, onZoom, currentImageIndex, images, onRequestClose
     const scrollViewRef = useRef(null);
     const [loaded, setLoaded] = useState(false);
     const [scaled, setScaled] = useState(false);
+    const [paused, setPaused] = useState(false)
     const imageDimensions = useImageDimensions(imageSrc);
     const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN);
     const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
@@ -63,7 +64,7 @@ const ImageItem = ({ imageSrc, onZoom, currentImageIndex, images, onRequestClose
             onScroll,
         })}>
             {(!loaded || !imageDimensions) && <ImageLoading />}
-            <TouchableWithoutFeedback onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
+            <TouchableWithoutFeedback onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onPressIn={() => setPaused(true)} onPressOut={() => setPaused(false)} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
                 {imageSrc.media_type != "VIDEO" ?
                     <Animated.Image source={imageSrc} style={imageStylesWithOpacity} onLoad={() => setLoaded(true)} />
                     :
@@ -73,7 +74,7 @@ const ImageItem = ({ imageSrc, onZoom, currentImageIndex, images, onRequestClose
                         resizeMode={"contain"}
                         style={styles.listItem}
                         onReadyForDisplay={() => setLoaded(true)}
-                        paused={images[currentImageIndex].story_id != imageSrc.story_id}
+                        paused={images[currentImageIndex].story_id != imageSrc.story_id ? true : paused}
                     />
                 }
             </TouchableWithoutFeedback>
