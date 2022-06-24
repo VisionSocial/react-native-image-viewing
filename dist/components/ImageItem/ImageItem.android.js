@@ -6,7 +6,7 @@
  *
  */
 import React, { useCallback, useRef, useState } from "react";
-import { Animated, ScrollView, Dimensions, StyleSheet, } from "react-native";
+import { Animated, ScrollView, Dimensions, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import useImageDimensions from "../../hooks/useImageDimensions";
 import usePanResponder from "../../hooks/usePanResponder";
 import { getImageStyles, getImageTransform } from "../../utils";
@@ -22,6 +22,7 @@ const ImageItem = ({ imageSrc, onZoom, currentImageIndex, images, onRequestClose
     const imageDimensions = useImageDimensions(imageSrc);
     const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
     const scrollValueY = new Animated.Value(0);
+    const [paused, setPaused] = useState(false);
     const [isLoaded, setLoadEnd] = useState(false);
     const onLoaded = useCallback(() => setLoadEnd(true), []);
     const onZoomPerformed = useCallback((isZoomed) => {
@@ -72,14 +73,16 @@ const ImageItem = ({ imageSrc, onZoom, currentImageIndex, images, onRequestClose
         {imageSrc.media_type != "VIDEO" ?
             <Animated.Image {...panHandlers} source={imageSrc} style={imageStylesWithOpacity} onLoad={onLoaded} />
             :
-            <Video
-                repeat
-                source={imageSrc}
-                resizeMode={"contain"}
-                style={styles.listItem}
-                onReadyForDisplay={onLoaded}
-                paused={images[currentImageIndex].story_id != imageSrc.story_id}
-            />
+            <TouchableWithoutFeedback onPressIn={() => setPaused(true)} onPressOut={() => setPaused(false)}>
+                <Video
+                    repeat
+                    source={imageSrc}
+                    resizeMode={"contain"}
+                    style={styles.listItem}
+                    onReadyForDisplay={onLoaded}
+                    paused={images[currentImageIndex].story_id != imageSrc.story_id ? true : paused}
+                />
+            </TouchableWithoutFeedback>
         }
         {(!isLoaded || !imageDimensions) && <ImageLoading />}
     </ScrollView>);
