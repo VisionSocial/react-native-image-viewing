@@ -18,6 +18,7 @@ import {
   TouchableWithoutFeedback,
   Modal,
   GestureResponderEvent,
+  TouchableOpacity,
 } from "react-native";
 
 import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
@@ -28,6 +29,7 @@ import { Iimages, IimageSrc, ImageSource } from "../../@types";
 import { ImageLoading } from "./ImageLoading";
 import Video from "react-native-video";
 import VideoPlayer from "react-native-video-controls";
+import VideoIcon from "../videoIcon";
 
 import RNFS from "react-native-fs";
 
@@ -65,7 +67,7 @@ const ImageItem = ({
   const [scaled, setScaled] = useState(false);
   const [paused, setPaused] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
-  const {width, height} = imageSrc;
+  const { width, height } = imageSrc;
   const imageDimensions =
     width && height
       ? { width: width, height: height }
@@ -162,8 +164,23 @@ const ImageItem = ({
         })}
       >
         {(!loaded || !imageDimensions) && <ImageLoading />}
+        {imageSrc.videoType ? (
+          <TouchableOpacity
+            onPress={() => setShowVideo(true)}
+            style={{
+              top: "40%",
+              zIndex: 10,
+              alignSelf: "center",
+              position: "absolute",
+              // backgroundColor: "white",
+            }}
+          >
+            <VideoIcon width={100} height={100}/>
+          </TouchableOpacity>
+        ) : null}
         <TouchableWithoutFeedback
-          onPress={() => onPressMedia()}
+          // onPress={() => onPressMedia()}
+          onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined}
           onPressIn={() => setPaused(true)}
           onPressOut={() => setPaused(false)}
           onLongPress={onLongPressHandler}

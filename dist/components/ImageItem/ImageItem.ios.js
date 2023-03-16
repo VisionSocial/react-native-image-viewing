@@ -6,11 +6,12 @@
  *
  */
 import React, { useCallback, useRef, useState } from "react";
-import { Animated, Dimensions, ScrollView, StyleSheet, View, TouchableWithoutFeedback, Modal, } from "react-native";
+import { Animated, Dimensions, ScrollView, StyleSheet, View, TouchableWithoutFeedback, Modal, TouchableOpacity, } from "react-native";
 import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
 import { getImageStyles, getImageTransform } from "../../utils";
 import { ImageLoading } from "./ImageLoading";
 import VideoPlayer from "react-native-video-controls";
+import VideoIcon from "../videoIcon";
 import RNFS from "react-native-fs";
 const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.55;
@@ -84,7 +85,18 @@ const ImageItem = ({ imageSrc, onZoom, images, onRequestClose, onLongPress, dela
         onScroll,
     })}>
         {(!loaded || !imageDimensions) && <ImageLoading />}
-        <TouchableWithoutFeedback onPress={() => onPressMedia()} onPressIn={() => setPaused(true)} onPressOut={() => setPaused(false)} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
+        {imageSrc.videoType ? (<TouchableOpacity onPress={() => setShowVideo(true)} style={{
+                top: "40%",
+                zIndex: 10,
+                alignSelf: "center",
+                position: "absolute",
+                // backgroundColor: "white",
+            }}>
+            <VideoIcon width={100} height={100}/>
+          </TouchableOpacity>) : null}
+        <TouchableWithoutFeedback 
+    // onPress={() => onPressMedia()}
+    onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onPressIn={() => setPaused(true)} onPressOut={() => setPaused(false)} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
           <View>
             <Animated.Image source={{
             uri: RNFS.DocumentDirectoryPath + "/" + imageSrc.source,
