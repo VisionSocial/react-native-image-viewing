@@ -50,8 +50,8 @@ export default function App() {
         : { uri: image.original as string }
     )
   );
-  const onLongPress = (image) => {
-    Alert.alert("Long Pressed", image.uri);
+  const onLongPress = () => {
+    Alert.alert("Long Pressed");
   };
 
   return (

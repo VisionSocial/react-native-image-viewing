@@ -6,23 +6,27 @@
  *
  */
 import React, { useCallback, useRef, useState } from "react";
-import { Animated, Dimensions, ScrollView, StyleSheet, View, TouchableWithoutFeedback } from "react-native";
+import { Animated, Dimensions, ScrollView, StyleSheet, View, TouchableWithoutFeedback, Modal, } from "react-native";
 import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
-import useImageDimensions from "../../hooks/useImageDimensions";
 import { getImageStyles, getImageTransform } from "../../utils";
 import { ImageLoading } from "./ImageLoading";
-import Video from 'react-native-video';
+import VideoPlayer from "react-native-video-controls";
+import RNFS from "react-native-fs";
 const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.55;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
 const SCREEN_HEIGHT = SCREEN.height;
-const ImageItem = ({ imageSrc, onZoom, currentImageIndex, images, onRequestClose, onLongPress, delayLongPress, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, }) => {
+const ImageItem = ({ imageSrc, onZoom, images, onRequestClose, onLongPress, delayLongPress, currentImageIndex, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, }) => {
     const scrollViewRef = useRef(null);
     const [loaded, setLoaded] = useState(false);
     const [scaled, setScaled] = useState(false);
-    const [paused, setPaused] = useState(false)
-    const imageDimensions = useImageDimensions(imageSrc);
+    const [paused, setPaused] = useState(false);
+    const [showVideo, setShowVideo] = useState(false);
+    const { width, height } = imageSrc;
+    const imageDimensions = width && height
+        ? { width: width, height: height }
+        : { width: 0, height: 0 };
     const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN);
     const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
     const scrollValueY = new Animated.Value(0);
@@ -36,9 +40,9 @@ const ImageItem = ({ imageSrc, onZoom, currentImageIndex, images, onRequestClose
     const imagesStyles = getImageStyles(imageDimensions, translateValue, scaleValue);
     const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity };
     const onScrollEndDrag = useCallback(({ nativeEvent }) => {
-        var _a, _b, _c, _d;
-        const velocityY = (_c = (_b = (_a = nativeEvent) === null || _a === void 0 ? void 0 : _a.velocity) === null || _b === void 0 ? void 0 : _b.y, (_c !== null && _c !== void 0 ? _c : 0));
-        const scaled = ((_d = nativeEvent) === null || _d === void 0 ? void 0 : _d.zoomScale) > 1;
+        var _a, _b;
+        const velocityY = (_b = (_a = nativeEvent === null || nativeEvent === void 0 ? void 0 : nativeEvent.velocity) === null || _a === void 0 ? void 0 : _a.y) !== null && _b !== void 0 ? _b : 0;
+        const scaled = (nativeEvent === null || nativeEvent === void 0 ? void 0 : nativeEvent.zoomScale) > 1;
         onZoom(scaled);
         setScaled(scaled);
         if (!scaled &&
@@ -48,37 +52,64 @@ const ImageItem = ({ imageSrc, onZoom, currentImageIndex, images, onRequestClose
         }
     }, [scaled]);
     const onScroll = ({ nativeEvent, }) => {
-        var _a, _b, _c, _d;
-        const offsetY = (_c = (_b = (_a = nativeEvent) === null || _a === void 0 ? void 0 : _a.contentOffset) === null || _b === void 0 ? void 0 : _b.y, (_c !== null && _c !== void 0 ? _c : 0));
-        if (((_d = nativeEvent) === null || _d === void 0 ? void 0 : _d.zoomScale) > 1) {
+        var _a, _b;
+        const offsetY = (_b = (_a = nativeEvent === null || nativeEvent === void 0 ? void 0 : nativeEvent.contentOffset) === null || _a === void 0 ? void 0 : _a.y) !== null && _b !== void 0 ? _b : 0;
+        if ((nativeEvent === null || nativeEvent === void 0 ? void 0 : nativeEvent.zoomScale) > 1) {
             return;
         }
         scrollValueY.setValue(offsetY);
     };
     const onLongPressHandler = useCallback((event) => {
-        onLongPress(imageSrc);
+        onLongPress();
     }, [imageSrc, onLongPress]);
-
+    const onPressMedia = () => {
+        try {
+            console.log("si entra");
+            if (doubleTapToZoomEnabled) {
+                handleDoubleTap;
+            }
+            if (imageSrc.videoType) {
+                setShowVideo(true);
+                // videoRef.presentFullscreenPlayer()
+                console.log("se entra");
+            }
+        }
+        catch (error) {
+            console.log("error in onPressMedia: ", error);
+        }
+        // imageSrc.videoType? () =>  : doubleTapToZoomEnabled ? handleDoubleTap : undefined
+    };
     return (<View>
-        <ScrollView ref={scrollViewRef} style={styles.listItem} pinchGestureEnabled showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} maximumZoomScale={maxScale} contentContainerStyle={styles.imageScrollContainer} scrollEnabled={swipeToCloseEnabled} onScrollEndDrag={onScrollEndDrag} scrollEventThrottle={1} {...(swipeToCloseEnabled && {
-            onScroll,
-        })}>
-            {(!loaded || !imageDimensions) && <ImageLoading />}
-            <TouchableWithoutFeedback onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onPressIn={() => setPaused(true)} onPressOut={() => setPaused(false)} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
-                {imageSrc.media_type != "VIDEO" ?
-                    <Animated.Image source={imageSrc} style={imageStylesWithOpacity} onLoad={() => setLoaded(true)} />
-                    :
-                    <Video
-                        repeat
-                        source={imageSrc}
-                        resizeMode={"contain"}
-                        style={styles.listItem}
-                        onReadyForDisplay={() => setLoaded(true)}
-                        paused={images[currentImageIndex].story_id != imageSrc.story_id ? true : paused}
-                    />
-                }
-            </TouchableWithoutFeedback>
-        </ScrollView>
+      <ScrollView ref={scrollViewRef} style={styles.listItem} pinchGestureEnabled showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} maximumZoomScale={maxScale} contentContainerStyle={styles.imageScrollContainer} scrollEnabled={swipeToCloseEnabled} onScrollEndDrag={onScrollEndDrag} scrollEventThrottle={1} {...(swipeToCloseEnabled && {
+        onScroll,
+    })}>
+        {(!loaded || !imageDimensions) && <ImageLoading />}
+        <TouchableWithoutFeedback onPress={() => onPressMedia()} onPressIn={() => setPaused(true)} onPressOut={() => setPaused(false)} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
+          <View>
+            <Animated.Image source={{
+            uri: RNFS.DocumentDirectoryPath + "/" + imageSrc.source,
+        }} style={imageStylesWithOpacity} onLoad={() => setLoaded(true)}/>
+            {/* {showVideo? */}
+            <Modal visible={showVideo} transparent={true}>
+              <VideoPlayer 
+    // controls={true}
+    onBack={() => setShowVideo(false)} fullscreen={true} isFullScreen={true} onExitFullscreen={() => setShowVideo(false)} 
+    // onEnd={() => setShowVideo(false)}
+    playWhenInactive={false} playInBackground={false} onFullscreenPlayerDidDismiss={() => {
+            console.log("'At this point, I know the fullscreen viewer is closing and my video will be paused, but I'm assuming the side effect rather than using an event.'");
+        }} 
+    // source={{uri: 'https://rawgit.com/mediaelement/mediaelement-files/master/big_buck_bunny.mp4'}}
+    fullscreenOrientation="all" source={{
+            uri: RNFS.DocumentDirectoryPath + "/" + imageSrc.video,
+        }} style={styles.listItem} 
+    // style={{width: videoWidth, height: videoHeight}}
+    onReadyForDisplay={() => setLoaded(true)}/>
+            </Modal>
+            {/* : null */}
+            {/* } */}
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
     </View>);
 };
 const styles = StyleSheet.create({

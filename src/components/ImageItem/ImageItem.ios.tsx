@@ -6,8 +6,7 @@
  *
  */
 
-import React, { useCallback, useRef, useState } from "react";
-
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -17,6 +16,7 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   TouchableWithoutFeedback,
+  Modal,
   GestureResponderEvent,
 } from "react-native";
 
@@ -24,8 +24,12 @@ import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
 import useImageDimensions from "../../hooks/useImageDimensions";
 
 import { getImageStyles, getImageTransform } from "../../utils";
-import { ImageSource } from "../../@types";
+import { Iimages, IimageSrc, ImageSource } from "../../@types";
 import { ImageLoading } from "./ImageLoading";
+import Video from "react-native-video";
+import VideoPlayer from "react-native-video-controls";
+
+import RNFS from "react-native-fs";
 
 const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.55;
@@ -34,11 +38,13 @@ const SCREEN_WIDTH = SCREEN.width;
 const SCREEN_HEIGHT = SCREEN.height;
 
 type Props = {
-  imageSrc: ImageSource;
+  imageSrc: IimageSrc;
   onRequestClose: () => void;
   onZoom: (scaled: boolean) => void;
-  onLongPress: (image: ImageSource) => void;
+  onLongPress: () => void;
   delayLongPress: number;
+  images: Array<Iimages>;
+  currentImageIndex: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
 };
@@ -46,16 +52,24 @@ type Props = {
 const ImageItem = ({
   imageSrc,
   onZoom,
+  images,
   onRequestClose,
   onLongPress,
   delayLongPress,
+  currentImageIndex,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
 }: Props) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const [loaded, setLoaded] = useState(false);
   const [scaled, setScaled] = useState(false);
-  const imageDimensions = useImageDimensions(imageSrc);
+  const [paused, setPaused] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
+  const {width, height} = imageSrc;
+  const imageDimensions =
+    width && height
+      ? { width: width, height: height }
+      : { width: 0, height: 0 };
   const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN);
 
   const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
@@ -108,10 +122,27 @@ const ImageItem = ({
 
   const onLongPressHandler = useCallback(
     (event: GestureResponderEvent) => {
-      onLongPress(imageSrc);
+      onLongPress();
     },
     [imageSrc, onLongPress]
   );
+
+  const onPressMedia = () => {
+    try {
+      console.log("si entra");
+      if (doubleTapToZoomEnabled) {
+        handleDoubleTap;
+      }
+      if (imageSrc.videoType) {
+        setShowVideo(true);
+        // videoRef.presentFullscreenPlayer()
+        console.log("se entra");
+      }
+    } catch (error) {
+      console.log("error in onPressMedia: ", error);
+    }
+    // imageSrc.videoType? () =>  : doubleTapToZoomEnabled ? handleDoubleTap : undefined
+  };
 
   return (
     <View>
@@ -132,15 +163,54 @@ const ImageItem = ({
       >
         {(!loaded || !imageDimensions) && <ImageLoading />}
         <TouchableWithoutFeedback
-          onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined}
+          onPress={() => onPressMedia()}
+          onPressIn={() => setPaused(true)}
+          onPressOut={() => setPaused(false)}
           onLongPress={onLongPressHandler}
           delayLongPress={delayLongPress}
         >
-          <Animated.Image
-            source={imageSrc}
-            style={imageStylesWithOpacity}
-            onLoad={() => setLoaded(true)}
-          />
+          <View>
+            <Animated.Image
+              source={{
+                uri: RNFS.DocumentDirectoryPath + "/" + imageSrc.source,
+              }}
+              style={imageStylesWithOpacity}
+              onLoad={() => setLoaded(true)}
+            />
+            {/* {showVideo? */}
+            <Modal
+              visible={showVideo}
+              transparent={true}
+              // ref={ videoRef }
+            >
+              <VideoPlayer
+                // controls={true}
+                onBack={() => setShowVideo(false)}
+                fullscreen={true}
+                isFullScreen={true}
+                onExitFullscreen={() => setShowVideo(false)}
+                // onEnd={() => setShowVideo(false)}
+                playWhenInactive={false}
+                playInBackground={false}
+                onFullscreenPlayerDidDismiss={() => {
+                  console.log(
+                    "'At this point, I know the fullscreen viewer is closing and my video will be paused, but I'm assuming the side effect rather than using an event.'"
+                  );
+                }}
+                // source={{uri: 'https://rawgit.com/mediaelement/mediaelement-files/master/big_buck_bunny.mp4'}}
+                fullscreenOrientation="all"
+                source={{
+                  uri: RNFS.DocumentDirectoryPath + "/" + imageSrc.video,
+                }}
+                style={styles.listItem}
+                // style={{width: videoWidth, height: videoHeight}}
+                onReadyForDisplay={() => setLoaded(true)}
+                // paused={images[currentImageIndex]._id != imageSrc._id ? true : paused}
+              />
+            </Modal>
+            {/* : null */}
+            {/* } */}
+          </View>
         </TouchableWithoutFeedback>
       </ScrollView>
     </View>

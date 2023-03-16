@@ -24,7 +24,7 @@ import StatusBarManager from "./components/StatusBarManager";
 import useAnimatedComponents from "./hooks/useAnimatedComponents";
 import useImageIndexChange from "./hooks/useImageIndexChange";
 import useRequestClose from "./hooks/useRequestClose";
-import { ImageSource } from "./@types";
+import { IimageSrc, ImageSource } from "./@types";
 
 type Props = {
   images: ImageSource[];
@@ -32,7 +32,7 @@ type Props = {
   imageIndex: number;
   visible: boolean;
   onRequestClose: () => void;
-  onLongPress?: (image: ImageSource) => void;
+  onLongPress?: () => void;
   onImageIndexChange?: (imageIndex: number) => void;
   presentationStyle?: ModalProps["presentationStyle"];
   animationType?: ModalProps["animationType"];
@@ -104,15 +104,14 @@ function ImageViewing({
     >
       <StatusBarManager presentationStyle={presentationStyle} />
       <View style={[styles.container, { opacity, backgroundColor }]}>
-        <Animated.View style={[styles.header, { transform: headerTransform }]}>
-          {typeof HeaderComponent !== "undefined" ? (
-            React.createElement(HeaderComponent, {
+        {/* {!showVideo?
+      <Animated.View style={[styles.header, { transform: headerTransform }]}>
+          {typeof HeaderComponent !== "undefined" ? (React.createElement(HeaderComponent, {
               imageIndex: currentImageIndex,
-            })
-          ) : (
-            <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
-          )}
-        </Animated.View>
+          })) : (<ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />)}
+      </Animated.View>
+      : null
+      } */}
         <VirtualizedList
           ref={imageList}
           data={images}
@@ -133,7 +132,10 @@ function ImageViewing({
           })}
           renderItem={({ item: imageSrc }) => (
             <ImageItem
+              opacity={opacity}
               onZoom={onZoom}
+              currentImageIndex={currentImageIndex}
+              images={images}
               imageSrc={imageSrc}
               onRequestClose={onRequestCloseEnhanced}
               onLongPress={onLongPress}

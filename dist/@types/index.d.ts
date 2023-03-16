@@ -6,12 +6,38 @@
  *
  */
 import { ImageURISource, ImageRequireSource } from "react-native";
-export declare type Dimensions = {
+export type Dimensions = {
     width: number;
     height: number;
 };
-export declare type Position = {
+export type Position = {
     x: number;
     y: number;
 };
-export declare type ImageSource = ImageURISource | ImageRequireSource;
+export interface Iimages {
+    story_id?: number | string;
+}
+export interface IimageSrc {
+    story_id?: number | string;
+    uri: ImageURISource | ImageRequireSource;
+    source: ImageURISource | ImageRequireSource;
+    video: ImageURISource | ImageRequireSource;
+    story_preview?: ImageURISource | ImageRequireSource;
+    media_type?: string;
+    videoSize?: number;
+    videoWidth?: number;
+    videoHeight?: number;
+    videoType?: string;
+    assignee?: Array<any>;
+    type?: string;
+    date_added?: Date;
+    date_created: Date;
+    is_cover: boolean;
+    fileName: string;
+    fileSize: number;
+    duration?: number;
+    height?: number;
+    width?: number;
+    password?: string;
+}
+export type ImageSource = ImageURISource | ImageRequireSource;

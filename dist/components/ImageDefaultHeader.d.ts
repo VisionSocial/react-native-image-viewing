@@ -6,7 +6,7 @@
  *
  */
 /// <reference types="react" />
-declare type Props = {
+type Props = {
     onRequestClose: () => void;
 };
 declare const ImageDefaultHeader: ({ onRequestClose }: Props) => JSX.Element;
