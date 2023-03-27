@@ -15,6 +15,8 @@ import {
   VirtualizedList,
   ModalProps,
   Modal,
+  TouchableOpacity,
+  Text,
 } from "react-native";
 
 import ImageItem from "./components/ImageItem/ImageItem";
@@ -24,11 +26,12 @@ import StatusBarManager from "./components/StatusBarManager";
 import useAnimatedComponents from "./hooks/useAnimatedComponents";
 import useImageIndexChange from "./hooks/useImageIndexChange";
 import useRequestClose from "./hooks/useRequestClose";
-import { IimageSrc, ImageSource } from "./@types";
+import { IBottomList, IimageSrc, ImageSource } from "./@types";
 
 type Props = {
-  images: ImageSource[];
-  keyExtractor?: (imageSrc: ImageSource, index: number) => string;
+  actionList: IBottomList[];
+  images: IimageSrc[];
+  keyExtractor?: (imageSrc: IimageSrc, index: number) => string;
   imageIndex: number;
   visible: boolean;
   onRequestClose: () => void;
@@ -52,6 +55,7 @@ const SCREEN_WIDTH = SCREEN.width;
 
 function ImageViewing({
   images,
+  actionList = [],
   keyExtractor,
   imageIndex,
   visible,
@@ -92,6 +96,16 @@ function ImageViewing({
     return null;
   }
 
+  const bottomFn = (item: IBottomList) => {
+    console.log("name", item.name);
+
+    item?.func(images[currentImageIndex]);
+
+    if (item?.name === "delete") {
+      images.splice(currentImageIndex, 1);
+    }
+  };
+
   return (
     <Modal
       transparent={presentationStyle === "overFullScreen"}
@@ -103,6 +117,44 @@ function ImageViewing({
       hardwareAccelerated
     >
       <StatusBarManager presentationStyle={presentationStyle} />
+      <View
+        style={{
+          flex: 1,
+          flexGrow: 1,
+          bottom: 0,
+          zIndex: 100,
+          // alignSelf: "center",
+          width: SCREEN_WIDTH,
+          height: 100,
+          position: "absolute",
+          borderWidth: 4,
+          borderColor: "white",
+          // backgroundColor: "white",
+        }}
+      >
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          {actionList.map((item, index) => {
+            return (
+              <TouchableOpacity
+                onPress={() => bottomFn(item)}
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderWidth: 2,
+                  borderColor: "blue",
+                }}
+              >
+                <Text
+                  style={{ color: "white", fontSize: 20, fontWeight: "bold" }}
+                >
+                  {item.name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
       <View style={[styles.container, { opacity, backgroundColor }]}>
         {/* {!showVideo?
       <Animated.View style={[styles.header, { transform: headerTransform }]}>
@@ -135,7 +187,7 @@ function ImageViewing({
               opacity={opacity}
               onZoom={onZoom}
               currentImageIndex={currentImageIndex}
-              images={images}
+              // images={images}
               imageSrc={imageSrc}
               onRequestClose={onRequestCloseEnhanced}
               onLongPress={onLongPress}
@@ -151,7 +203,7 @@ function ImageViewing({
               ? keyExtractor(imageSrc, index)
               : typeof imageSrc === "number"
               ? `${imageSrc}`
-              : imageSrc.uri
+              : imageSrc.source
           }
         />
         {typeof FooterComponent !== "undefined" && (

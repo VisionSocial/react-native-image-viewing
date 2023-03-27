@@ -7,10 +7,11 @@
  */
 import { ComponentType } from "react";
 import { ModalProps } from "react-native";
-import { ImageSource } from "./@types";
+import { IBottomList, IimageSrc } from "./@types";
 type Props = {
-    images: ImageSource[];
-    keyExtractor?: (imageSrc: ImageSource, index: number) => string;
+    actionList: IBottomList[];
+    images: IimageSrc[];
+    keyExtractor?: (imageSrc: IimageSrc, index: number) => string;
     imageIndex: number;
     visible: boolean;
     onRequestClose: () => void;

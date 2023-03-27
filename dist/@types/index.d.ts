@@ -17,13 +17,14 @@ export type Position = {
 export interface Iimages {
     story_id?: number | string;
 }
+export interface IBottomList {
+    name: string;
+    func: (file: IimageSrc) => void;
+}
 export interface IimageSrc {
-    story_id?: number | string;
-    uri: ImageURISource | ImageRequireSource;
-    source: ImageURISource | ImageRequireSource;
-    video: ImageURISource | ImageRequireSource;
-    story_preview?: ImageURISource | ImageRequireSource;
-    media_type?: string;
+    _id?: any;
+    source?: any | string | null;
+    video?: string;
     videoSize?: number;
     videoWidth?: number;
     videoHeight?: number;
@@ -39,5 +40,9 @@ export interface IimageSrc {
     height?: number;
     width?: number;
     password?: string;
+    cloud_sync?: any;
+    localId?: string;
+    is_deleted?: boolean;
+    deleted_at?: Date;
 }
 export type ImageSource = ImageURISource | ImageRequireSource;

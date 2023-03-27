@@ -18,7 +18,9 @@ const SWIPE_CLOSE_VELOCITY = 1.55;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
 const SCREEN_HEIGHT = SCREEN.height;
-const ImageItem = ({ imageSrc, onZoom, images, onRequestClose, onLongPress, delayLongPress, currentImageIndex, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, }) => {
+const ImageItem = ({ imageSrc, onZoom, 
+// images,
+onRequestClose, onLongPress, delayLongPress, currentImageIndex, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, }) => {
     const scrollViewRef = useRef(null);
     const [loaded, setLoaded] = useState(false);
     const [scaled, setScaled] = useState(false);

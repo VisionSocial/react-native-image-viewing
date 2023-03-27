@@ -45,7 +45,7 @@ type Props = {
   onZoom: (scaled: boolean) => void;
   onLongPress: () => void;
   delayLongPress: number;
-  images: Array<Iimages>;
+  // images: Array<Iimages>;
   currentImageIndex: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
@@ -54,7 +54,7 @@ type Props = {
 const ImageItem = ({
   imageSrc,
   onZoom,
-  images,
+  // images,
   onRequestClose,
   onLongPress,
   delayLongPress,

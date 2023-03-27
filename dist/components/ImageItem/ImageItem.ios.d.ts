@@ -6,17 +6,16 @@
  *
  */
 import React from "react";
-import { Iimages, IimageSrc } from "../../@types";
+import { IimageSrc } from "../../@types";
 type Props = {
     imageSrc: IimageSrc;
     onRequestClose: () => void;
     onZoom: (scaled: boolean) => void;
     onLongPress: () => void;
     delayLongPress: number;
-    images: Array<Iimages>;
     currentImageIndex: number;
     swipeToCloseEnabled?: boolean;
     doubleTapToZoomEnabled?: boolean;
 };
-declare const _default: React.MemoExoticComponent<({ imageSrc, onZoom, images, onRequestClose, onLongPress, delayLongPress, currentImageIndex, swipeToCloseEnabled, doubleTapToZoomEnabled, }: Props) => JSX.Element>;
+declare const _default: React.MemoExoticComponent<({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPress, currentImageIndex, swipeToCloseEnabled, doubleTapToZoomEnabled, }: Props) => JSX.Element>;
 export default _default;

@@ -6,7 +6,7 @@
  *
  */
 import React, { useCallback, useRef, useEffect } from "react";
-import { Animated, Dimensions, StyleSheet, View, VirtualizedList, Modal, } from "react-native";
+import { Animated, Dimensions, StyleSheet, View, VirtualizedList, Modal, TouchableOpacity, Text, } from "react-native";
 import ImageItem from "./components/ImageItem/ImageItem";
 import StatusBarManager from "./components/StatusBarManager";
 import useAnimatedComponents from "./hooks/useAnimatedComponents";
@@ -17,7 +17,7 @@ const DEFAULT_BG_COLOR = "#000";
 const DEFAULT_DELAY_LONG_PRESS = 800;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
-function ImageViewing({ images, keyExtractor, imageIndex, visible, onRequestClose, onLongPress = () => { }, onImageIndexChange, animationType = DEFAULT_ANIMATION_TYPE, backgroundColor = DEFAULT_BG_COLOR, presentationStyle, swipeToCloseEnabled, doubleTapToZoomEnabled, delayLongPress = DEFAULT_DELAY_LONG_PRESS, HeaderComponent, FooterComponent, }) {
+function ImageViewing({ images, actionList = [], keyExtractor, imageIndex, visible, onRequestClose, onLongPress = () => { }, onImageIndexChange, animationType = DEFAULT_ANIMATION_TYPE, backgroundColor = DEFAULT_BG_COLOR, presentationStyle, swipeToCloseEnabled, doubleTapToZoomEnabled, delayLongPress = DEFAULT_DELAY_LONG_PRESS, HeaderComponent, FooterComponent, }) {
     const imageList = useRef(null);
     const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
     const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
@@ -36,8 +36,44 @@ function ImageViewing({ images, keyExtractor, imageIndex, visible, onRequestClos
     if (!visible) {
         return null;
     }
+    const bottomFn = (item) => {
+        console.log("name", item.name);
+        item === null || item === void 0 ? void 0 : item.func(images[currentImageIndex]);
+        if ((item === null || item === void 0 ? void 0 : item.name) === "delete") {
+            images.splice(currentImageIndex, 1);
+        }
+    };
     return (<Modal transparent={presentationStyle === "overFullScreen"} visible={visible} presentationStyle={presentationStyle} animationType={animationType} onRequestClose={onRequestCloseEnhanced} supportedOrientations={["portrait"]} hardwareAccelerated>
       <StatusBarManager presentationStyle={presentationStyle}/>
+      <View style={{
+            flex: 1,
+            flexGrow: 1,
+            bottom: 0,
+            zIndex: 100,
+            // alignSelf: "center",
+            width: SCREEN_WIDTH,
+            height: 100,
+            position: "absolute",
+            borderWidth: 4,
+            borderColor: "white",
+            // backgroundColor: "white",
+        }}>
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          {actionList.map((item, index) => {
+            return (<TouchableOpacity onPress={() => bottomFn(item)} style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderWidth: 2,
+                    borderColor: "blue",
+                }}>
+                <Text style={{ color: "white", fontSize: 20, fontWeight: "bold" }}>
+                  {item.name}
+                </Text>
+              </TouchableOpacity>);
+        })}
+        </View>
+      </View>
       <View style={[styles.container, { opacity, backgroundColor }]}>
         {/* {!showVideo?
       <Animated.View style={[styles.header, { transform: headerTransform }]}>
@@ -51,13 +87,15 @@ function ImageViewing({ images, keyExtractor, imageIndex, visible, onRequestClos
             length: SCREEN_WIDTH,
             offset: SCREEN_WIDTH * index,
             index,
-        })} renderItem={({ item: imageSrc }) => (<ImageItem opacity={opacity} onZoom={onZoom} currentImageIndex={currentImageIndex} images={images} imageSrc={imageSrc} onRequestClose={onRequestCloseEnhanced} onLongPress={onLongPress} delayLongPress={delayLongPress} swipeToCloseEnabled={swipeToCloseEnabled} doubleTapToZoomEnabled={doubleTapToZoomEnabled}/>)} onMomentumScrollEnd={onScroll} 
+        })} renderItem={({ item: imageSrc }) => (<ImageItem opacity={opacity} onZoom={onZoom} currentImageIndex={currentImageIndex} 
+        // images={images}
+        imageSrc={imageSrc} onRequestClose={onRequestCloseEnhanced} onLongPress={onLongPress} delayLongPress={delayLongPress} swipeToCloseEnabled={swipeToCloseEnabled} doubleTapToZoomEnabled={doubleTapToZoomEnabled}/>)} onMomentumScrollEnd={onScroll} 
     //@ts-ignore
     keyExtractor={(imageSrc, index) => keyExtractor
             ? keyExtractor(imageSrc, index)
             : typeof imageSrc === "number"
                 ? `${imageSrc}`
-                : imageSrc.uri}/>
+                : imageSrc.source}/>
         {typeof FooterComponent !== "undefined" && (<Animated.View style={[styles.footer, { transform: footerTransform }]}>
             {React.createElement(FooterComponent, {
                 imageIndex: currentImageIndex,
