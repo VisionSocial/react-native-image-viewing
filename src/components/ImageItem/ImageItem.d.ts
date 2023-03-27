@@ -11,7 +11,7 @@ import { GestureResponderEvent } from "react-native";
 import { Iimages, IimageSrc } from "../../@types";
 
 declare type Props = {
-  images: Array<Iimages>;
+  images: Array<IimageSrc>;
   imageSrc: IimageSrc;
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
