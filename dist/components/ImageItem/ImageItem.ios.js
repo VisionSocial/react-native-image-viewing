@@ -65,62 +65,26 @@ onRequestClose, onLongPress, setShowOptions, delayLongPress, currentImageIndex, 
     const onLongPressHandler = useCallback((event) => {
         onLongPress();
     }, [imageSrc, onLongPress]);
-    const onPressMedia = () => {
-        try {
-            console.log("si entra");
-            if (doubleTapToZoomEnabled) {
-                handleDoubleTap;
-            }
-            if (imageSrc.videoType) {
-                setShowVideo(true);
-                // videoRef.presentFullscreenPlayer()
-                console.log("se entra");
-            }
-        }
-        catch (error) {
-            console.log("error in onPressMedia: ", error);
-        }
-        // imageSrc.videoType? () =>  : doubleTapToZoomEnabled ? handleDoubleTap : undefined
-    };
     return (<View>
       <ScrollView ref={scrollViewRef} style={styles.listItem} pinchGestureEnabled showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} maximumZoomScale={maxScale} contentContainerStyle={styles.imageScrollContainer} scrollEnabled={swipeToCloseEnabled} onScrollEndDrag={onScrollEndDrag} scrollEventThrottle={1} {...(swipeToCloseEnabled && {
         onScroll,
     })}>
         {(!loaded || !imageDimensions) && <ImageLoading />}
-        {imageSrc.videoType ? (<TouchableOpacity onPress={() => setShowVideo(true)} style={{
-                top: "40%",
-                zIndex: 10,
-                alignSelf: "center",
-                position: "absolute",
-                // backgroundColor: "white",
-            }}>
+        {imageSrc.videoType ? (<TouchableOpacity onPress={() => setShowVideo(true)} style={styles.videoIcon}>
             <VideoIcon width={100} height={100}/>
           </TouchableOpacity>) : null}
-        <TouchableWithoutFeedback 
-    // onPress={() => onPressMedia()}
-    onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onPressIn={() => setPaused(true)} onPressOut={() => setPaused(false)} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
+        <TouchableWithoutFeedback onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onPressIn={() => setPaused(true)} onPressOut={() => setPaused(false)} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
           <View style={{ flex: 1 }}>
             <Animated.Image source={{
             uri: RNFS.DocumentDirectoryPath + "/" + imageSrc.source,
         }} style={imageStylesWithOpacity} onLoad={() => setLoaded(true)}/>
-            {/* {showVideo? */}
             <Modal visible={showVideo} transparent={true}>
-              <VideoPlayer 
-    // controls={true}
-    onBack={() => setShowVideo(false)} fullscreen={true} isFullScreen={true} onExitFullscreen={() => setShowVideo(false)} 
-    // onEnd={() => setShowVideo(false)}
-    playWhenInactive={false} playInBackground={false} onFullscreenPlayerDidDismiss={() => {
+              <VideoPlayer onBack={() => setShowVideo(false)} fullscreen={true} isFullScreen={true} onExitFullscreen={() => setShowVideo(false)} playWhenInactive={false} playInBackground={false} onFullscreenPlayerDidDismiss={() => {
             console.log("'At this point, I know the fullscreen viewer is closing and my video will be paused, but I'm assuming the side effect rather than using an event.'");
-        }} 
-    // source={{uri: 'https://rawgit.com/mediaelement/mediaelement-files/master/big_buck_bunny.mp4'}}
-    fullscreenOrientation="all" source={{
+        }} fullscreenOrientation="all" source={{
             uri: RNFS.DocumentDirectoryPath + "/" + imageSrc.video,
-        }} style={styles.listItem} 
-    // style={{width: videoWidth, height: videoHeight}}
-    onReadyForDisplay={() => setLoaded(true)}/>
+        }} style={styles.listItem} onReadyForDisplay={() => setLoaded(true)}/>
             </Modal>
-            {/* : null */}
-            {/* } */}
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
@@ -133,6 +97,12 @@ const styles = StyleSheet.create({
     },
     imageScrollContainer: {
         height: SCREEN_HEIGHT,
+    },
+    videoIcon: {
+        top: "40%",
+        zIndex: 10,
+        alignSelf: "center",
+        position: "absolute",
     },
 });
 export default React.memo(ImageItem);

@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+/// <reference types="react" />
 import { ImageURISource, ImageRequireSource } from "react-native";
 export type Dimensions = {
     width: number;

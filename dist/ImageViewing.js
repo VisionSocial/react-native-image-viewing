@@ -39,7 +39,6 @@ function ImageViewing({ images, ModalsRender, actionList = [], keyExtractor, ima
         return null;
     }
     const bottomFn = (item) => {
-        console.log("name", item.name);
         item === null || item === void 0 ? void 0 : item.func(images[currentImageIndex]);
         if ((item === null || item === void 0 ? void 0 : item.name) === "delete") {
             images.splice(currentImageIndex, 1);
@@ -79,21 +78,11 @@ function ImageViewing({ images, ModalsRender, actionList = [], keyExtractor, ima
           </View>
         </>) : null}
       <View style={[styles.container, { opacity, backgroundColor }]}>
-        {/* {!showVideo?
-      <Animated.View style={[styles.header, { transform: headerTransform }]}>
-          {typeof HeaderComponent !== "undefined" ? (React.createElement(HeaderComponent, {
-              imageIndex: currentImageIndex,
-          })) : (<ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />)}
-      </Animated.View>
-      : null
-      } */}
         <VirtualizedList ref={imageList} data={images} horizontal pagingEnabled windowSize={2} initialNumToRender={1} maxToRenderPerBatch={1} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} initialScrollIndex={imageIndex} getItem={(_, index) => images[index]} getItemCount={() => images.length} getItemLayout={(_, index) => ({
             length: SCREEN_WIDTH,
             offset: SCREEN_WIDTH * index,
             index,
-        })} renderItem={({ item: imageSrc }) => (<ImageItem opacity={opacity} onZoom={onZoom} setShowOptions={setShowOptions} currentImageIndex={currentImageIndex} 
-        // images={images}
-        imageSrc={imageSrc} onRequestClose={onRequestCloseEnhanced} onLongPress={onLongPress} delayLongPress={delayLongPress} swipeToCloseEnabled={swipeToCloseEnabled} doubleTapToZoomEnabled={doubleTapToZoomEnabled}/>)} onMomentumScrollEnd={onScroll} 
+        })} renderItem={({ item: imageSrc }) => (<ImageItem opacity={opacity} onZoom={onZoom} setShowOptions={setShowOptions} currentImageIndex={currentImageIndex} imageSrc={imageSrc} onRequestClose={onRequestCloseEnhanced} onLongPress={onLongPress} delayLongPress={delayLongPress} swipeToCloseEnabled={swipeToCloseEnabled} doubleTapToZoomEnabled={doubleTapToZoomEnabled}/>)} onMomentumScrollEnd={onScroll} 
     //@ts-ignore
     keyExtractor={(imageSrc, index) => keyExtractor
             ? keyExtractor(imageSrc, index)

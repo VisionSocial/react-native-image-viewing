@@ -108,10 +108,7 @@ function ImageViewing({
   }
 
   const bottomFn = (item: IBottomList) => {
-    console.log("name", item.name);
-
     item?.func(images[currentImageIndex]);
-
     if (item?.name === "delete") {
       images.splice(currentImageIndex, 1);
     }
@@ -167,14 +164,6 @@ function ImageViewing({
         </>
       ) : null}
       <View style={[styles.container, { opacity, backgroundColor }]}>
-        {/* {!showVideo?
-      <Animated.View style={[styles.header, { transform: headerTransform }]}>
-          {typeof HeaderComponent !== "undefined" ? (React.createElement(HeaderComponent, {
-              imageIndex: currentImageIndex,
-          })) : (<ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />)}
-      </Animated.View>
-      : null
-      } */}
         <VirtualizedList
           ref={imageList}
           data={images}
@@ -199,7 +188,6 @@ function ImageViewing({
               onZoom={onZoom}
               setShowOptions={setShowOptions}
               currentImageIndex={currentImageIndex}
-              // images={images}
               imageSrc={imageSrc}
               onRequestClose={onRequestCloseEnhanced}
               onLongPress={onLongPress}

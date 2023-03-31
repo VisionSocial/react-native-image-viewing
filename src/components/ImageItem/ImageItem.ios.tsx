@@ -74,7 +74,12 @@ const ImageItem = ({
     width && height
       ? { width: width, height: height }
       : { width: 0, height: 0 };
-      const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN, setShowOptions);
+  const handleDoubleTap = useDoubleTapToZoom(
+    scrollViewRef,
+    scaled,
+    SCREEN,
+    setShowOptions
+  );
 
   const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
   const scrollValueY = new Animated.Value(0);
@@ -131,23 +136,6 @@ const ImageItem = ({
     [imageSrc, onLongPress]
   );
 
-  const onPressMedia = () => {
-    try {
-      console.log("si entra");
-      if (doubleTapToZoomEnabled) {
-        handleDoubleTap;
-      }
-      if (imageSrc.videoType) {
-        setShowVideo(true);
-        // videoRef.presentFullscreenPlayer()
-        console.log("se entra");
-      }
-    } catch (error) {
-      console.log("error in onPressMedia: ", error);
-    }
-    // imageSrc.videoType? () =>  : doubleTapToZoomEnabled ? handleDoubleTap : undefined
-  };
-
   return (
     <View>
       <ScrollView
@@ -169,26 +157,19 @@ const ImageItem = ({
         {imageSrc.videoType ? (
           <TouchableOpacity
             onPress={() => setShowVideo(true)}
-            style={{
-              top: "40%",
-              zIndex: 10,
-              alignSelf: "center",
-              position: "absolute",
-              // backgroundColor: "white",
-            }}
+            style={styles.videoIcon}
           >
             <VideoIcon width={100} height={100} />
           </TouchableOpacity>
         ) : null}
         <TouchableWithoutFeedback
-          // onPress={() => onPressMedia()}
           onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined}
           onPressIn={() => setPaused(true)}
           onPressOut={() => setPaused(false)}
           onLongPress={onLongPressHandler}
           delayLongPress={delayLongPress}
         >
-          <View style={{flex:1}}>
+          <View style={{ flex: 1 }}>
             <Animated.Image
               source={{
                 uri: RNFS.DocumentDirectoryPath + "/" + imageSrc.source,
@@ -196,19 +177,12 @@ const ImageItem = ({
               style={imageStylesWithOpacity}
               onLoad={() => setLoaded(true)}
             />
-            {/* {showVideo? */}
-            <Modal
-              visible={showVideo}
-              transparent={true}
-              // ref={ videoRef }
-            >
+            <Modal visible={showVideo} transparent={true}>
               <VideoPlayer
-                // controls={true}
                 onBack={() => setShowVideo(false)}
                 fullscreen={true}
                 isFullScreen={true}
                 onExitFullscreen={() => setShowVideo(false)}
-                // onEnd={() => setShowVideo(false)}
                 playWhenInactive={false}
                 playInBackground={false}
                 onFullscreenPlayerDidDismiss={() => {
@@ -216,19 +190,14 @@ const ImageItem = ({
                     "'At this point, I know the fullscreen viewer is closing and my video will be paused, but I'm assuming the side effect rather than using an event.'"
                   );
                 }}
-                // source={{uri: 'https://rawgit.com/mediaelement/mediaelement-files/master/big_buck_bunny.mp4'}}
                 fullscreenOrientation="all"
                 source={{
                   uri: RNFS.DocumentDirectoryPath + "/" + imageSrc.video,
                 }}
                 style={styles.listItem}
-                // style={{width: videoWidth, height: videoHeight}}
                 onReadyForDisplay={() => setLoaded(true)}
-                // paused={images[currentImageIndex]._id != imageSrc._id ? true : paused}
               />
             </Modal>
-            {/* : null */}
-            {/* } */}
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
@@ -243,6 +212,12 @@ const styles = StyleSheet.create({
   },
   imageScrollContainer: {
     height: SCREEN_HEIGHT,
+  },
+  videoIcon: {
+    top: "40%",
+    zIndex: 10,
+    alignSelf: "center",
+    position: "absolute",
   },
 });
 
