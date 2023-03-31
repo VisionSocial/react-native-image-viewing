@@ -12,11 +12,11 @@ let lastTapTS = null;
  * This is iOS only.
  * Same functionality for Android implemented inside usePanResponder hook.
  */
-function useDoubleTapToZoom(scrollViewRef, scaled, screen) {
+function useDoubleTapToZoom(scrollViewRef, scaled, screen, setShowOptions) {
     const handleDoubleTap = useCallback((event) => {
-        var _a, _b, _c;
+        var _a;
         const nowTS = new Date().getTime();
-        const scrollResponderRef = (_b = (_a = scrollViewRef) === null || _a === void 0 ? void 0 : _a.current) === null || _b === void 0 ? void 0 : _b.getScrollResponder();
+        const scrollResponderRef = (_a = scrollViewRef === null || scrollViewRef === void 0 ? void 0 : scrollViewRef.current) === null || _a === void 0 ? void 0 : _a.getScrollResponder();
         if (lastTapTS && nowTS - lastTapTS < DOUBLE_TAP_DELAY) {
             const { pageX, pageY } = event.nativeEvent;
             let targetX = 0;
@@ -26,13 +26,14 @@ function useDoubleTapToZoom(scrollViewRef, scaled, screen) {
             // Zooming in
             // TODO: Add more precise calculation of targetX, targetY based on touch
             if (!scaled) {
+                setShowOptions(false);
                 targetX = pageX / 2;
                 targetY = pageY / 2;
                 targetWidth = screen.width / 2;
                 targetHeight = screen.height / 2;
             }
             // @ts-ignore
-            (_c = scrollResponderRef) === null || _c === void 0 ? void 0 : _c.scrollResponderZoomTo({
+            scrollResponderRef === null || scrollResponderRef === void 0 ? void 0 : scrollResponderRef.scrollResponderZoomTo({
                 x: targetX,
                 y: targetY,
                 width: targetWidth,
@@ -41,6 +42,9 @@ function useDoubleTapToZoom(scrollViewRef, scaled, screen) {
             });
         }
         else {
+            if (!scaled) {
+                setShowOptions((showOptions) => !showOptions);
+            }
             lastTapTS = nowTS;
         }
     }, [scaled]);
