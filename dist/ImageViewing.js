@@ -5,22 +5,24 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import React, { useCallback, useRef, useEffect } from "react";
+import React, { useCallback, useRef, useEffect, useState, } from "react";
 import { Animated, Dimensions, StyleSheet, View, VirtualizedList, Modal, TouchableOpacity, Text, } from "react-native";
 import ImageItem from "./components/ImageItem/ImageItem";
 import StatusBarManager from "./components/StatusBarManager";
 import useAnimatedComponents from "./hooks/useAnimatedComponents";
 import useImageIndexChange from "./hooks/useImageIndexChange";
 import useRequestClose from "./hooks/useRequestClose";
+import BackIcon from "../../../src/components/icons/backIcon";
 const DEFAULT_ANIMATION_TYPE = "fade";
 const DEFAULT_BG_COLOR = "#000";
 const DEFAULT_DELAY_LONG_PRESS = 800;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
-function ImageViewing({ images, actionList = [], keyExtractor, imageIndex, visible, onRequestClose, onLongPress = () => { }, onImageIndexChange, animationType = DEFAULT_ANIMATION_TYPE, backgroundColor = DEFAULT_BG_COLOR, presentationStyle, swipeToCloseEnabled, doubleTapToZoomEnabled, delayLongPress = DEFAULT_DELAY_LONG_PRESS, HeaderComponent, FooterComponent, }) {
+function ImageViewing({ images, ModalsRender, actionList = [], keyExtractor, imageIndex, visible, onRequestClose, onLongPress = () => { }, onImageIndexChange, animationType = DEFAULT_ANIMATION_TYPE, backgroundColor = DEFAULT_BG_COLOR, presentationStyle, swipeToCloseEnabled, doubleTapToZoomEnabled, delayLongPress = DEFAULT_DELAY_LONG_PRESS, HeaderComponent, FooterComponent, }) {
     const imageList = useRef(null);
     const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
     const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
+    const [showOptions, setShowOptions] = useState(false);
     const [headerTransform, footerTransform, toggleBarsVisible] = useAnimatedComponents();
     useEffect(() => {
         if (onImageIndexChange) {
@@ -45,35 +47,37 @@ function ImageViewing({ images, actionList = [], keyExtractor, imageIndex, visib
     };
     return (<Modal transparent={presentationStyle === "overFullScreen"} visible={visible} presentationStyle={presentationStyle} animationType={animationType} onRequestClose={onRequestCloseEnhanced} supportedOrientations={["portrait"]} hardwareAccelerated>
       <StatusBarManager presentationStyle={presentationStyle}/>
-      <View style={{
-            flex: 1,
-            flexGrow: 1,
-            bottom: 0,
-            zIndex: 100,
-            // alignSelf: "center",
-            width: SCREEN_WIDTH,
-            height: 100,
-            position: "absolute",
-            borderWidth: 4,
-            borderColor: "white",
-            // backgroundColor: "white",
-        }}>
-        <View style={{ flex: 1, flexDirection: "row" }}>
-          {actionList.map((item, index) => {
-            return (<TouchableOpacity onPress={() => bottomFn(item)} style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderWidth: 2,
-                    borderColor: "blue",
-                }}>
-                <Text style={{ color: "white", fontSize: 20, fontWeight: "bold" }}>
-                  {item.name}
+      {showOptions ? (<>
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={styles.headerContent}>
+              <TouchableOpacity onPress={() => onRequestCloseEnhanced()} style={styles.headerBack}>
+                <BackIcon width={24} height={24}/>
+              </TouchableOpacity>
+              <View style={styles.indexOf}>
+                {/* eslint-disable-next-line react-native/no-inline-styles */}
+                <Text style={{ color: "white" }}>
+                  {currentImageIndex + 1 + " / " + images.length}
                 </Text>
-              </TouchableOpacity>);
-        })}
-        </View>
-      </View>
+              </View>
+              {/* eslint-disable-next-line react-native/no-inline-styles */}
+              <View style={{ flex: 1 }}/>
+            </View>
+          </View>
+
+          {/* Footer */}
+          <View style={styles.footer}>
+            <View style={styles.footerContent}>
+              {actionList.map((item, index) => {
+                return (<View style={styles.footerItem}>
+                    <TouchableOpacity onPress={() => bottomFn(item)}>
+                      {item.icon}
+                    </TouchableOpacity>
+                  </View>);
+            })}
+            </View>
+          </View>
+        </>) : null}
       <View style={[styles.container, { opacity, backgroundColor }]}>
         {/* {!showVideo?
       <Animated.View style={[styles.header, { transform: headerTransform }]}>
@@ -87,7 +91,7 @@ function ImageViewing({ images, actionList = [], keyExtractor, imageIndex, visib
             length: SCREEN_WIDTH,
             offset: SCREEN_WIDTH * index,
             index,
-        })} renderItem={({ item: imageSrc }) => (<ImageItem opacity={opacity} onZoom={onZoom} currentImageIndex={currentImageIndex} 
+        })} renderItem={({ item: imageSrc }) => (<ImageItem opacity={opacity} onZoom={onZoom} setShowOptions={setShowOptions} currentImageIndex={currentImageIndex} 
         // images={images}
         imageSrc={imageSrc} onRequestClose={onRequestCloseEnhanced} onLongPress={onLongPress} delayLongPress={delayLongPress} swipeToCloseEnabled={swipeToCloseEnabled} doubleTapToZoomEnabled={doubleTapToZoomEnabled}/>)} onMomentumScrollEnd={onScroll} 
     //@ts-ignore
@@ -102,6 +106,7 @@ function ImageViewing({ images, actionList = [], keyExtractor, imageIndex, visib
             })}
           </Animated.View>)}
       </View>
+      {ModalsRender()}
     </Modal>);
 }
 const styles = StyleSheet.create({
@@ -109,17 +114,51 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#000",
     },
+    headerContent: {
+        flex: 1,
+        flexDirection: "row",
+        paddingTop: "10%",
+        justifyContent: "space-between",
+        backgroundColor: "rgba(14, 20, 35, 0.9)",
+    },
     header: {
-        position: "absolute",
-        width: "100%",
-        zIndex: 1,
+        flex: 1,
+        flexGrow: 1,
         top: 0,
+        zIndex: 100,
+        width: SCREEN_WIDTH,
+        height: "9%",
+        position: "absolute",
+        flexDirection: "row",
+    },
+    headerBack: {
+        flex: 1,
+        paddingLeft: 10,
+        justifyContent: "center",
+    },
+    indexOf: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
     },
     footer: {
-        position: "absolute",
-        width: "100%",
-        zIndex: 1,
+        flex: 1,
+        flexGrow: 1,
         bottom: 0,
+        zIndex: 100,
+        width: SCREEN_WIDTH,
+        height: "9%",
+        position: "absolute",
+        backgroundColor: "rgba(14, 20, 35, 0.9)",
+    },
+    footerContent: {
+        flex: 1,
+        flexDirection: "row",
+    },
+    footerItem: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
 const EnhancedImageViewing = (props) => (<ImageViewing key={props.imageIndex} {...props}/>);

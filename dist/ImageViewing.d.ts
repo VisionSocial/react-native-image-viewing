@@ -5,12 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { ComponentType } from "react";
+import React, { ComponentType, Dispatch } from "react";
 import { ModalProps } from "react-native";
 import { IBottomList, IimageSrc } from "./@types";
 type Props = {
     actionList: IBottomList[];
     images: IimageSrc[];
+    ModalsRender: () => JSX.Element;
+    setMediaIndex: Dispatch<React.SetStateAction<number>>;
     keyExtractor?: (imageSrc: IimageSrc, index: number) => string;
     imageIndex: number;
     visible: boolean;

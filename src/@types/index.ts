@@ -24,6 +24,7 @@ export interface Iimages {
 export interface IBottomList {
   name: string; 
   func: (file: IimageSrc) => void;
+  icon: JSX.Element;
 }
 
 export interface IimageSrc {

@@ -44,6 +44,7 @@ type Props = {
   onRequestClose: () => void;
   onZoom: (scaled: boolean) => void;
   onLongPress: () => void;
+  setShowOptions: (showOptions: boolean) => void;
   delayLongPress: number;
   // images: Array<Iimages>;
   currentImageIndex: number;
@@ -57,6 +58,7 @@ const ImageItem = ({
   // images,
   onRequestClose,
   onLongPress,
+  setShowOptions,
   delayLongPress,
   currentImageIndex,
   swipeToCloseEnabled = true,
@@ -72,7 +74,7 @@ const ImageItem = ({
     width && height
       ? { width: width, height: height }
       : { width: 0, height: 0 };
-  const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN);
+      const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN, setShowOptions);
 
   const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
   const scrollValueY = new Animated.Value(0);
@@ -175,7 +177,7 @@ const ImageItem = ({
               // backgroundColor: "white",
             }}
           >
-            <VideoIcon width={100} height={100}/>
+            <VideoIcon width={100} height={100} />
           </TouchableOpacity>
         ) : null}
         <TouchableWithoutFeedback
@@ -186,7 +188,7 @@ const ImageItem = ({
           onLongPress={onLongPressHandler}
           delayLongPress={delayLongPress}
         >
-          <View>
+          <View style={{flex:1}}>
             <Animated.Image
               source={{
                 uri: RNFS.DocumentDirectoryPath + "/" + imageSrc.source,

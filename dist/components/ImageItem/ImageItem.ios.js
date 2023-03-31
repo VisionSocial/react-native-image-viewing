@@ -20,7 +20,7 @@ const SCREEN_WIDTH = SCREEN.width;
 const SCREEN_HEIGHT = SCREEN.height;
 const ImageItem = ({ imageSrc, onZoom, 
 // images,
-onRequestClose, onLongPress, delayLongPress, currentImageIndex, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, }) => {
+onRequestClose, onLongPress, setShowOptions, delayLongPress, currentImageIndex, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, }) => {
     const scrollViewRef = useRef(null);
     const [loaded, setLoaded] = useState(false);
     const [scaled, setScaled] = useState(false);
@@ -30,7 +30,7 @@ onRequestClose, onLongPress, delayLongPress, currentImageIndex, swipeToCloseEnab
     const imageDimensions = width && height
         ? { width: width, height: height }
         : { width: 0, height: 0 };
-    const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN);
+    const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN, setShowOptions);
     const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
     const scrollValueY = new Animated.Value(0);
     const scaleValue = new Animated.Value(scale || 1);
@@ -99,7 +99,7 @@ onRequestClose, onLongPress, delayLongPress, currentImageIndex, swipeToCloseEnab
         <TouchableWithoutFeedback 
     // onPress={() => onPressMedia()}
     onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onPressIn={() => setPaused(true)} onPressOut={() => setPaused(false)} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
-          <View>
+          <View style={{ flex: 1 }}>
             <Animated.Image source={{
             uri: RNFS.DocumentDirectoryPath + "/" + imageSrc.source,
         }} style={imageStylesWithOpacity} onLoad={() => setLoaded(true)}/>
