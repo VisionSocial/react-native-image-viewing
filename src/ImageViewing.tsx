@@ -109,9 +109,6 @@ function ImageViewing({
 
   const bottomFn = (item: IBottomList) => {
     item?.func(images[currentImageIndex]);
-    if (item?.name === "delete") {
-      images.splice(currentImageIndex, 1);
-    }
   };
 
   return (
