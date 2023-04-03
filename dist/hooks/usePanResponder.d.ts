@@ -7,7 +7,7 @@
  */
 import { Animated, GestureResponderHandlers } from "react-native";
 import { Position } from "../@types";
-declare type Props = {
+type Props = {
     initialScale: number;
     initialTranslate: Position;
     onZoom: (isZoomed: boolean) => void;

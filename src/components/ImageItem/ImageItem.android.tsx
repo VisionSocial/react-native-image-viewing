@@ -70,7 +70,7 @@ const ImageItem = ({
   );
 
   const onLongPressHandler = useCallback(() => {
-    onLongPress(imageSrc);
+    onLongPress();
   }, [imageSrc, onLongPress]);
 
   const [panHandlers, scaleValue, translateValue] = usePanResponder({
