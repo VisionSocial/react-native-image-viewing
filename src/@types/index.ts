@@ -50,27 +50,6 @@ export interface IimageSrc {
   localId?: string;
   is_deleted?: boolean;
   deleted_at?: Date;
-  // story_id?: number | string;
-  // uri: ImageURISource | ImageRequireSource;
-  // source: ImageURISource | ImageRequireSource;
-  // video: ImageURISource | ImageRequireSource;
-  // story_preview?: ImageURISource | ImageRequireSource;
-  // media_type?: string;
-  // videoSize?: number;
-  // videoWidth?: number;
-  // videoHeight?: number;
-  // videoType?: string;
-  // assignee?: Array<any>;
-  // type?: string;
-  // date_added?: Date;
-  // date_created: Date;
-  // is_cover: boolean;
-  // fileName: string;
-  // fileSize: number;
-  // duration?: number;
-  // height?: number;
-  // width?: number;
-  // password?: string;
 }
 
 export type ImageSource = ImageURISource | ImageRequireSource;
