@@ -40,9 +40,6 @@ function ImageViewing({ images, ModalsRender, actionList = [], keyExtractor, ima
     }
     const bottomFn = (item) => {
         item === null || item === void 0 ? void 0 : item.func(images[currentImageIndex]);
-        if ((item === null || item === void 0 ? void 0 : item.name) === "delete") {
-            images.splice(currentImageIndex, 1);
-        }
     };
     return (<Modal transparent={presentationStyle === "overFullScreen"} visible={visible} presentationStyle={presentationStyle} animationType={animationType} onRequestClose={onRequestCloseEnhanced} supportedOrientations={["portrait"]} hardwareAccelerated>
       <StatusBarManager presentationStyle={presentationStyle}/>
