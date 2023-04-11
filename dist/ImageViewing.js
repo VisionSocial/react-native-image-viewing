@@ -65,8 +65,8 @@ function ImageViewing({ images, ModalsRender, actionList = [], keyExtractor, ima
           <View style={styles.footer}>
             <View style={styles.footerContent}>
               {actionList.map((item, index) => {
-                return (<View style={styles.footerItem}>
-                    <TouchableOpacity onPress={() => bottomFn(item)}>
+                return (<View key={index} style={styles.footerItem}>
+                    <TouchableOpacity key={index} onPress={() => bottomFn(item)}>
                       {item.icon}
                     </TouchableOpacity>
                   </View>);
