@@ -6,11 +6,11 @@
  *
  */
 import React from "react";
-import { ScrollView, NativeTouchEvent, NativeSyntheticEvent } from "react-native";
+import { ScrollView } from "react-native";
 import { Dimensions } from "../@types";
 /**
  * This is iOS only.
  * Same functionality for Android implemented inside usePanResponder hook.
  */
-declare function useDoubleTapToZoom(scrollViewRef: React.RefObject<ScrollView>, scaled: boolean, screen: Dimensions, setShowOptions: React.Dispatch<React.SetStateAction<boolean>>): (event: NativeSyntheticEvent<NativeTouchEvent>) => void;
+declare function useDoubleTapToZoom(scrollViewRef: React.RefObject<ScrollView>, scaled: boolean, screen: Dimensions, setShowOptions: React.Dispatch<React.SetStateAction<boolean>>): any;
 export default useDoubleTapToZoom;

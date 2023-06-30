@@ -5,14 +5,5 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { Animated } from "react-native";
-declare const useAnimatedComponents: () => readonly [[{
-    translateX: Animated.Value;
-}, {
-    translateY: Animated.Value;
-}], [{
-    translateX: Animated.Value;
-}, {
-    translateY: Animated.Value;
-}], (isVisible: boolean) => void];
+declare const useAnimatedComponents: () => readonly [any, any, (isVisible: boolean) => void];
 export default useAnimatedComponents;

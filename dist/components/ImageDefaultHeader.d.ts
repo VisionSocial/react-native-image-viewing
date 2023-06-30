@@ -5,9 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-/// <reference types="react" />
 type Props = {
     onRequestClose: () => void;
 };
-declare const ImageDefaultHeader: ({ onRequestClose }: Props) => JSX.Element;
+declare const ImageDefaultHeader: ({ onRequestClose }: Props) => any;
 export default ImageDefaultHeader;

@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { Animated, GestureResponderHandlers } from "react-native";
 import { Position } from "../@types";
 type Props = {
     initialScale: number;
