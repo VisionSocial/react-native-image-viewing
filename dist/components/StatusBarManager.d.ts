@@ -1,5 +1,5 @@
 import { ModalProps } from "react-native";
 declare const StatusBarManager: ({ presentationStyle, }: {
-    presentationStyle?: ModalProps["presentationStyle"];
+    presentationStyle?: any;
 }) => null;
 export default StatusBarManager;
