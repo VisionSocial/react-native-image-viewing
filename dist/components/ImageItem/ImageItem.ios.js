@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
         height: SCREEN_HEIGHT,
     },
     videoIcon: {
-        top: "40%",
+        top: "70%",
         zIndex: 10,
         alignSelf: "center",
         position: "absolute",
