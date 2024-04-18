@@ -6,7 +6,7 @@
  *
  */
 
-import React, { ComponentType, useCallback, useRef, useEffect } from "react";
+import React, { ComponentType, useCallback, useRef, useEffect, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -42,6 +42,8 @@ type Props = {
   delayLongPress?: number;
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
+  hideComponents?: boolean;
+  children: React.ReactNode;
 };
 
 const DEFAULT_ANIMATION_TYPE = "fade";
@@ -66,10 +68,13 @@ function ImageViewing({
   delayLongPress = DEFAULT_DELAY_LONG_PRESS,
   HeaderComponent,
   FooterComponent,
+  hideComponents = false,
+  children
 }: Props) {
   const imageList = useRef<VirtualizedList<ImageSource>>(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
+  const [showComponents, setShowComponents] = useState(true);
   const [headerTransform, footerTransform, toggleBarsVisible] =
     useAnimatedComponents();
 
@@ -104,6 +109,7 @@ function ImageViewing({
     >
       <StatusBarManager presentationStyle={presentationStyle} />
       <View style={[styles.container, { opacity, backgroundColor }]}>
+        {showComponents &&
         <Animated.View style={[styles.header, { transform: headerTransform }]}>
           {typeof HeaderComponent !== "undefined" ? (
             React.createElement(HeaderComponent, {
@@ -113,6 +119,7 @@ function ImageViewing({
             <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
           )}
         </Animated.View>
+}
         <VirtualizedList
           ref={imageList}
           data={images}
@@ -140,6 +147,8 @@ function ImageViewing({
               delayLongPress={delayLongPress}
               swipeToCloseEnabled={swipeToCloseEnabled}
               doubleTapToZoomEnabled={doubleTapToZoomEnabled}
+              setShowComponents={hideComponents ? setShowComponents : undefined}
+              showComponents={hideComponents ? showComponents : undefined}
             />
           )}
           onMomentumScrollEnd={onScroll}
@@ -152,7 +161,7 @@ function ImageViewing({
               : imageSrc.uri
           }
         />
-        {typeof FooterComponent !== "undefined" && (
+        {typeof FooterComponent !== "undefined" && showComponents && (
           <Animated.View
             style={[styles.footer, { transform: footerTransform }]}
           >
@@ -161,6 +170,7 @@ function ImageViewing({
             })}
           </Animated.View>
         )}
+        {typeof children !== "undefined" && children}
       </View>
     </Modal>
   );

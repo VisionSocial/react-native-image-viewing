@@ -18,6 +18,8 @@ declare type Props = {
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  setShowComponents?: ((showComponents: boolean) => void) | undefined;
+  showComponents?: boolean | undefined;
 };
 
 declare const _default: React.MemoExoticComponent<({
@@ -27,6 +29,8 @@ declare const _default: React.MemoExoticComponent<({
   onLongPress,
   delayLongPress,
   swipeToCloseEnabled,
+  setShowComponents,
+  showComponents
 }: Props) => JSX.Element>;
 
 export default _default;

@@ -9,6 +9,7 @@
 import React, { useCallback, useRef, useState } from "react";
 
 import {
+  TouchableWithoutFeedback,
   Animated,
   ScrollView,
   Dimensions,
@@ -39,6 +40,8 @@ type Props = {
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  setShowComponents?: (showComponents: boolean) => void;
+  showComponents?: boolean;
 };
 
 const ImageItem = ({
@@ -49,6 +52,8 @@ const ImageItem = ({
   delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
+  setShowComponents,
+  showComponents
 }: Props) => {
   const imageContainer = useRef<ScrollView & NativeMethodsMixin>(null);
   const imageDimensions = useImageDimensions(imageSrc);
@@ -117,6 +122,7 @@ const ImageItem = ({
   };
 
   return (
+    <TouchableWithoutFeedback onPress={() => showComponents && setShowComponents && setShowComponents(!showComponents)}>
     <ScrollView
       ref={imageContainer}
       style={styles.listItem}
@@ -139,6 +145,7 @@ const ImageItem = ({
       />
       {(!isLoaded || !imageDimensions) && <ImageLoading />}
     </ScrollView>
+    </TouchableWithoutFeedback>
   );
 };
 
