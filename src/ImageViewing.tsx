@@ -43,7 +43,7 @@ type Props = {
   HeaderComponent?: ComponentType<{ imageIndex: number }>;
   FooterComponent?: ComponentType<{ imageIndex: number }>;
   hideComponents?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 const DEFAULT_ANIMATION_TYPE = "fade";
