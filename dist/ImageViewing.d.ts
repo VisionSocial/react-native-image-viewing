@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { ComponentType } from "react";
+import React, { ComponentType } from "react";
 import { ModalProps } from "react-native";
 import { ImageSource } from "./@types";
 declare type Props = {
@@ -28,6 +28,8 @@ declare type Props = {
     FooterComponent?: ComponentType<{
         imageIndex: number;
     }>;
+    hideComponents?: boolean;
+    children: React.ReactNode;
 };
 declare const EnhancedImageViewing: (props: Props) => JSX.Element;
 export default EnhancedImageViewing;

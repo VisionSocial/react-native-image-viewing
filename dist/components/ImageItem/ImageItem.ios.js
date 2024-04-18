@@ -6,24 +6,22 @@
  *
  */
 import React, { useCallback, useRef, useState } from "react";
-import { Animated, Dimensions, ScrollView, StyleSheet, View, TouchableWithoutFeedback } from "react-native";
+import { Animated, Dimensions, ScrollView, StyleSheet, View, TouchableWithoutFeedback, } from "react-native";
 import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
 import useImageDimensions from "../../hooks/useImageDimensions";
 import { getImageStyles, getImageTransform } from "../../utils";
 import { ImageLoading } from "./ImageLoading";
-import Video from 'react-native-video';
 const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.55;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
 const SCREEN_HEIGHT = SCREEN.height;
-const ImageItem = ({ imageSrc, onZoom, currentImageIndex, images, onRequestClose, onLongPress, delayLongPress, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, }) => {
+const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPress, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, setShowComponents, showComponents, }) => {
     const scrollViewRef = useRef(null);
     const [loaded, setLoaded] = useState(false);
     const [scaled, setScaled] = useState(false);
-    const [paused, setPaused] = useState(false)
     const imageDimensions = useImageDimensions(imageSrc);
-    const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN);
+    const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN, setShowComponents, showComponents);
     const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
     const scrollValueY = new Animated.Value(0);
     const scaleValue = new Animated.Value(scale || 1);
@@ -58,27 +56,15 @@ const ImageItem = ({ imageSrc, onZoom, currentImageIndex, images, onRequestClose
     const onLongPressHandler = useCallback((event) => {
         onLongPress(imageSrc);
     }, [imageSrc, onLongPress]);
-
     return (<View>
-        <ScrollView ref={scrollViewRef} style={styles.listItem} pinchGestureEnabled showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} maximumZoomScale={maxScale} contentContainerStyle={styles.imageScrollContainer} scrollEnabled={swipeToCloseEnabled} onScrollEndDrag={onScrollEndDrag} scrollEventThrottle={1} {...(swipeToCloseEnabled && {
-            onScroll,
-        })}>
-            {(!loaded || !imageDimensions) && <ImageLoading />}
-            <TouchableWithoutFeedback onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onPressIn={() => setPaused(true)} onPressOut={() => setPaused(false)} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
-                {imageSrc.media_type != "VIDEO" ?
-                    <Animated.Image source={imageSrc} style={imageStylesWithOpacity} onLoad={() => setLoaded(true)} />
-                    :
-                    <Video
-                        repeat
-                        source={imageSrc}
-                        resizeMode={"contain"}
-                        style={styles.listItem}
-                        onReadyForDisplay={() => setLoaded(true)}
-                        paused={images[currentImageIndex].story_id != imageSrc.story_id ? true : paused}
-                    />
-                }
-            </TouchableWithoutFeedback>
-        </ScrollView>
+      <ScrollView ref={scrollViewRef} style={styles.listItem} pinchGestureEnabled showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} maximumZoomScale={maxScale} contentContainerStyle={styles.imageScrollContainer} scrollEnabled={swipeToCloseEnabled} onScrollEndDrag={onScrollEndDrag} scrollEventThrottle={1} {...(swipeToCloseEnabled && {
+        onScroll,
+    })}>
+        {(!loaded || !imageDimensions) && <ImageLoading />}
+        <TouchableWithoutFeedback onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
+          <Animated.Image source={imageSrc} style={imageStylesWithOpacity} onLoad={() => setLoaded(true)}/>
+        </TouchableWithoutFeedback>
+      </ScrollView>
     </View>);
 };
 const styles = StyleSheet.create({
