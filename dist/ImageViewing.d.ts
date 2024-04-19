@@ -29,7 +29,7 @@ declare type Props = {
         imageIndex: number;
     }>;
     hideComponents?: boolean;
-    children: React.ReactNode;
+    children?: React.ReactNode;
 };
 declare const EnhancedImageViewing: (props: Props) => JSX.Element;
 export default EnhancedImageViewing;
