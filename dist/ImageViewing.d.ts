@@ -31,5 +31,5 @@ declare type Props = {
     hideComponents?: boolean;
     children?: React.ReactNode;
 };
-declare const EnhancedImageViewing: (props: Props) => JSX.Element;
+declare const EnhancedImageViewing: (props: Props) => React.JSX.Element;
 export default EnhancedImageViewing;

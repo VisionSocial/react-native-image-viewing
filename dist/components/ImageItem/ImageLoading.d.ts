@@ -5,5 +5,5 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-/// <reference types="react" />
-export declare const ImageLoading: () => JSX.Element;
+import React from "react";
+export declare const ImageLoading: () => React.JSX.Element;

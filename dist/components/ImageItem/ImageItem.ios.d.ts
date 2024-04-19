@@ -18,5 +18,5 @@ declare type Props = {
     setShowComponents?: (showComponents: boolean) => void;
     showComponents?: boolean;
 };
-declare const _default: React.MemoExoticComponent<({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPress, swipeToCloseEnabled, doubleTapToZoomEnabled, setShowComponents, showComponents, }: Props) => JSX.Element>;
+declare const _default: React.MemoExoticComponent<({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPress, swipeToCloseEnabled, doubleTapToZoomEnabled, setShowComponents, showComponents, }: Props) => React.JSX.Element>;
 export default _default;
