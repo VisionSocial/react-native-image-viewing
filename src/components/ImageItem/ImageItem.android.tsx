@@ -40,8 +40,7 @@ type Props = {
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
-  setShowComponents?: (showComponents: boolean) => void;
-  showComponents?: boolean;
+  setShowComponents?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ImageItem = ({
@@ -53,7 +52,6 @@ const ImageItem = ({
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
   setShowComponents,
-  showComponents
 }: Props) => {
   const imageContainer = useRef<ScrollView & NativeMethodsMixin>(null);
   const imageDimensions = useImageDimensions(imageSrc);
@@ -85,7 +83,9 @@ const ImageItem = ({
     doubleTapToZoomEnabled,
     onLongPress: onLongPressHandler,
     delayLongPress,
-  });
+    setShowComponents
+  }
+);
 
   const imagesStyles = getImageStyles(
     imageDimensions,
@@ -122,7 +122,6 @@ const ImageItem = ({
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => showComponents && setShowComponents && setShowComponents(!showComponents)}>
     <ScrollView
       ref={imageContainer}
       style={styles.listItem}
@@ -137,15 +136,16 @@ const ImageItem = ({
         onScrollEndDrag,
       })}
     >
+      <TouchableWithoutFeedback onPress={() => setShowComponents && setShowComponents((showComponents) => !showComponents)}>
       <Animated.Image
-        {...panHandlers}
+        // {...panHandlers}
         source={imageSrc}
         style={imageStylesWithOpacity}
         onLoad={onLoaded}
       />
+      </TouchableWithoutFeedback>
       {(!isLoaded || !imageDimensions) && <ImageLoading />}
     </ScrollView>
-    </TouchableWithoutFeedback>
   );
 };
 

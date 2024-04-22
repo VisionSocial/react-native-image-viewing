@@ -41,8 +41,7 @@ type Props = {
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
-  setShowComponents?: (showComponents: boolean) => void;
-  showComponents?: boolean;
+  setShowComponents?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ImageItem = ({
@@ -53,14 +52,13 @@ const ImageItem = ({
   delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
-  setShowComponents,
-  showComponents,
+  setShowComponents
 }: Props) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const [loaded, setLoaded] = useState(false);
   const [scaled, setScaled] = useState(false);
   const imageDimensions = useImageDimensions(imageSrc);
-  const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN, setShowComponents, showComponents);
+  const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN, setShowComponents);
 
   const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
   const scrollValueY = new Animated.Value(0);

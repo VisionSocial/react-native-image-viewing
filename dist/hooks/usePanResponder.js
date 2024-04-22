@@ -15,7 +15,7 @@ const MIN_DIMENSION = Math.min(SCREEN_WIDTH, SCREEN_HEIGHT);
 const SCALE_MAX = 2;
 const DOUBLE_TAP_DELAY = 300;
 const OUT_BOUND_MULTIPLIER = 0.75;
-const usePanResponder = ({ initialScale, initialTranslate, onZoom, doubleTapToZoomEnabled, onLongPress, delayLongPress, }) => {
+const usePanResponder = ({ initialScale, initialTranslate, onZoom, doubleTapToZoomEnabled, onLongPress, delayLongPress, setShowComponents }) => {
     let numberInitialTouches = 1;
     let initialTouches = [];
     let currentScale = initialScale;
@@ -23,7 +23,7 @@ const usePanResponder = ({ initialScale, initialTranslate, onZoom, doubleTapToZo
     let tmpScale = 0;
     let tmpTranslate = null;
     let isDoubleTapPerformed = false;
-    let lastTapTS = null;
+    let lastTapTS = Date.now();
     let longPressHandlerRef = null;
     const meaningfulShift = MIN_DIMENSION * 0.01;
     const scaleValue = new Animated.Value(initialScale);
@@ -217,6 +217,12 @@ const usePanResponder = ({ initialScale, initialTranslate, onZoom, doubleTapToZo
             if (isDoubleTapPerformed) {
                 isDoubleTapPerformed = false;
             }
+            else {
+                if (setShowComponents && currentScale == initialScale && currentTranslate == initialTranslate) {
+                    setShowComponents((prev) => !prev);
+                    console.log('entra');
+                }
+            }
             if (tmpScale > 0) {
                 if (tmpScale < initialScale || tmpScale > SCALE_MAX) {
                     tmpScale = tmpScale < initialScale ? initialScale : SCALE_MAX;
@@ -267,7 +273,7 @@ const usePanResponder = ({ initialScale, initialTranslate, onZoom, doubleTapToZo
             }
         },
     };
-    const panResponder = useMemo(() => createPanResponder(handlers), [handlers]);
+    const panResponder = useMemo(() => createPanResponder(handlers), [handlers,]);
     return [panResponder.panHandlers, scaleValue, translateValue];
 };
 export default usePanResponder;

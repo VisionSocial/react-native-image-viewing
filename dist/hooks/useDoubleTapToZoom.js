@@ -12,7 +12,7 @@ let lastTapTS = null;
  * This is iOS only.
  * Same functionality for Android implemented inside usePanResponder hook.
  */
-function useDoubleTapToZoom(scrollViewRef, scaled, screen, setShowComponents, showComponents) {
+function useDoubleTapToZoom(scrollViewRef, scaled, screen, setShowComponents) {
     const handleDoubleTap = useCallback((event) => {
         var _a, _b, _c;
         const nowTS = new Date().getTime();
@@ -41,8 +41,8 @@ function useDoubleTapToZoom(scrollViewRef, scaled, screen, setShowComponents, sh
             });
         }
         else {
-            if (setShowComponents && showComponents)
-                setShowComponents(!showComponents);
+            if (setShowComponents)
+                setShowComponents((prev) => !prev);
             lastTapTS = nowTS;
         }
     }, [scaled]);

@@ -148,7 +148,6 @@ function ImageViewing({
               swipeToCloseEnabled={swipeToCloseEnabled}
               doubleTapToZoomEnabled={doubleTapToZoomEnabled}
               setShowComponents={hideComponents ? setShowComponents : undefined}
-              showComponents={hideComponents ? showComponents : undefined}
             />
           )}
           onMomentumScrollEnd={onScroll}

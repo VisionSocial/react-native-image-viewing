@@ -76,6 +76,7 @@ export default function App() {
         visible={isVisible}
         onRequestClose={onRequestClose}
         onLongPress={onLongPress}
+        hideComponents
         HeaderComponent={
           images === travel
             ? ({ imageIndex }) => {

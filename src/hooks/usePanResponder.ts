@@ -40,6 +40,7 @@ type Props = {
   doubleTapToZoomEnabled: boolean;
   onLongPress: () => void;
   delayLongPress: number;
+  setShowComponents?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const usePanResponder = ({
@@ -49,6 +50,7 @@ const usePanResponder = ({
   doubleTapToZoomEnabled,
   onLongPress,
   delayLongPress,
+  setShowComponents
 }: Props): Readonly<
   [GestureResponderHandlers, Animated.Value, Animated.ValueXY]
 > => {
@@ -59,7 +61,7 @@ const usePanResponder = ({
   let tmpScale = 0;
   let tmpTranslate: Position | null = null;
   let isDoubleTapPerformed = false;
-  let lastTapTS: number | null = null;
+  let lastTapTS: number | null = Date.now();
   let longPressHandlerRef: number | null = null;
 
   const meaningfulShift = MIN_DIMENSION * 0.01;
@@ -130,9 +132,7 @@ const usePanResponder = ({
       gestureState: PanResponderGestureState
     ) => {
       numberInitialTouches = gestureState.numberActiveTouches;
-
       if (gestureState.numberActiveTouches > 1) return;
-
       longPressHandlerRef = setTimeout(onLongPress, delayLongPress);
     },
     onStart: (
@@ -150,7 +150,6 @@ const usePanResponder = ({
       isDoubleTapPerformed = Boolean(
         lastTapTS && tapTS - lastTapTS < DOUBLE_TAP_DELAY
       );
-
       if (doubleTapToZoomEnabled && isDoubleTapPerformed) {
         const isScaled = currentTranslate.x !== initialTranslate.x; // currentScale !== initialScale;
         const { pageX: touchX, pageY: touchY } = event.nativeEvent.touches[0];
@@ -229,7 +228,6 @@ const usePanResponder = ({
         numberInitialTouches == 1 && gestureState.numberActiveTouches === 1;
       const isPinchGesture =
         numberInitialTouches === 2 && gestureState.numberActiveTouches === 2;
-
       if (isPinchGesture) {
         cancelLongPressHandle();
 
@@ -276,8 +274,7 @@ const usePanResponder = ({
         scaleValue.setValue(nextScale);
         tmpScale = nextScale;
       }
-
-      if (isTapGesture && currentScale > initialScale) {
+      if (isTapGesture && currentScale > initialScale) {     
         const { x, y } = currentTranslate;
         const { dx, dy } = gestureState;
         const [topBound, leftBound, bottomBound, rightBound] = getBounds(
@@ -325,12 +322,15 @@ const usePanResponder = ({
       }
     },
     onRelease: () => {
-      cancelLongPressHandle();
-
+      cancelLongPressHandle(); 
       if (isDoubleTapPerformed) {
         isDoubleTapPerformed = false;
+      } else {
+        if(setShowComponents && currentScale == initialScale && currentTranslate == initialTranslate) {
+          setShowComponents((prev) => !prev);
+          console.log('entra')
+        }
       }
-
       if (tmpScale > 0) {
         if (tmpScale < initialScale || tmpScale > SCALE_MAX) {
           tmpScale = tmpScale < initialScale ? initialScale : SCALE_MAX;
@@ -343,14 +343,12 @@ const usePanResponder = ({
 
         currentScale = tmpScale;
         tmpScale = 0;
-      }
-
+      } 
       if (tmpTranslate) {
         const { x, y } = tmpTranslate;
         const [topBound, leftBound, bottomBound, rightBound] = getBounds(
           currentScale
         );
-
         let nextTranslateX = x;
         let nextTranslateY = y;
 
@@ -369,7 +367,6 @@ const usePanResponder = ({
             nextTranslateY = bottomBound;
           }
         }
-
         Animated.parallel([
           Animated.timing(translateValue.x, {
             toValue: nextTranslateX,
@@ -389,8 +386,7 @@ const usePanResponder = ({
     },
   };
 
-  const panResponder = useMemo(() => createPanResponder(handlers), [handlers]);
-
+  const panResponder = useMemo(() => createPanResponder(handlers), [handlers, ]);
   return [panResponder.panHandlers, scaleValue, translateValue];
 };
 

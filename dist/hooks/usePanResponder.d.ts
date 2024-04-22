@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+/// <reference types="react" />
 import { Animated, GestureResponderHandlers } from "react-native";
 import { Position } from "../@types";
 declare type Props = {
@@ -14,6 +15,7 @@ declare type Props = {
     doubleTapToZoomEnabled: boolean;
     onLongPress: () => void;
     delayLongPress: number;
+    setShowComponents?: React.Dispatch<React.SetStateAction<boolean>>;
 };
-declare const usePanResponder: ({ initialScale, initialTranslate, onZoom, doubleTapToZoomEnabled, onLongPress, delayLongPress, }: Props) => readonly [GestureResponderHandlers, Animated.Value, Animated.ValueXY];
+declare const usePanResponder: ({ initialScale, initialTranslate, onZoom, doubleTapToZoomEnabled, onLongPress, delayLongPress, setShowComponents }: Props) => readonly [GestureResponderHandlers, Animated.Value, Animated.ValueXY];
 export default usePanResponder;

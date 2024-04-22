@@ -51,7 +51,7 @@ function ImageViewing({ images, keyExtractor, imageIndex, visible, onRequestClos
         length: SCREEN_WIDTH,
         offset: SCREEN_WIDTH * index,
         index,
-    })} renderItem={({ item: imageSrc }) => (<ImageItem onZoom={onZoom} imageSrc={imageSrc} onRequestClose={onRequestCloseEnhanced} onLongPress={onLongPress} delayLongPress={delayLongPress} swipeToCloseEnabled={swipeToCloseEnabled} doubleTapToZoomEnabled={doubleTapToZoomEnabled} setShowComponents={hideComponents ? setShowComponents : undefined} showComponents={hideComponents ? showComponents : undefined}/>)} onMomentumScrollEnd={onScroll} 
+    })} renderItem={({ item: imageSrc }) => (<ImageItem onZoom={onZoom} imageSrc={imageSrc} onRequestClose={onRequestCloseEnhanced} onLongPress={onLongPress} delayLongPress={delayLongPress} swipeToCloseEnabled={swipeToCloseEnabled} doubleTapToZoomEnabled={doubleTapToZoomEnabled} setShowComponents={hideComponents ? setShowComponents : undefined}/>)} onMomentumScrollEnd={onScroll} 
     //@ts-ignore
     keyExtractor={(imageSrc, index) => keyExtractor
         ? keyExtractor(imageSrc, index)

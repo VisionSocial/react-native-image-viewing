@@ -16,12 +16,12 @@ const SWIPE_CLOSE_VELOCITY = 1.55;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
 const SCREEN_HEIGHT = SCREEN.height;
-const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPress, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, setShowComponents, showComponents, }) => {
+const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPress, swipeToCloseEnabled = true, doubleTapToZoomEnabled = true, setShowComponents }) => {
     const scrollViewRef = useRef(null);
     const [loaded, setLoaded] = useState(false);
     const [scaled, setScaled] = useState(false);
     const imageDimensions = useImageDimensions(imageSrc);
-    const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN, setShowComponents, showComponents);
+    const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN, setShowComponents);
     const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
     const scrollValueY = new Animated.Value(0);
     const scaleValue = new Animated.Value(scale || 1);

@@ -26,8 +26,7 @@ function useDoubleTapToZoom(
   scrollViewRef: React.RefObject<ScrollView>,
   scaled: boolean,
   screen: Dimensions,
-  setShowComponents: ((showComponents: boolean) => void) | undefined,
-  showComponents: boolean | undefined
+  setShowComponents?: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   const handleDoubleTap = useCallback(
     (event: NativeSyntheticEvent<NativeTouchEvent>) => {
@@ -59,7 +58,7 @@ function useDoubleTapToZoom(
           animated: true,
         });
       } else {
-        if(setShowComponents && showComponents) setShowComponents(!showComponents);
+        if(setShowComponents) setShowComponents((prev) => !prev);
         lastTapTS = nowTS;
       }
     },
