@@ -6,7 +6,7 @@
  *
  */
 
-import React, { ComponentType, useCallback, useRef, useEffect, useState } from "react";
+import React, { ComponentType, useCallback, useRef, useEffect, useState, PropsWithChildren } from "react";
 import {
   Animated,
   Dimensions,
@@ -40,8 +40,8 @@ type Props = {
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
   delayLongPress?: number;
-  HeaderComponent?: ComponentType<{ imageIndex: number }>;
-  FooterComponent?: ComponentType<{ imageIndex: number }>;
+  HeaderComponent?: ({ imageIndex }: PropsWithChildren<{ imageIndex: number; }>) => JSX.Element;
+  FooterComponent?: ({ imageIndex }: PropsWithChildren<{ imageIndex: number; }>) => JSX.Element;
   hideComponents?: boolean;
   children?: React.ReactNode;
 };
@@ -109,17 +109,6 @@ function ImageViewing({
     >
       <StatusBarManager presentationStyle={presentationStyle} />
       <View style={[styles.container, { opacity, backgroundColor }]}>
-        {showComponents &&
-        <Animated.View style={[styles.header, { transform: headerTransform }]}>
-          {typeof HeaderComponent !== "undefined" ? (
-            React.createElement(HeaderComponent, {
-              imageIndex: currentImageIndex,
-            })
-          ) : (
-            <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
-          )}
-        </Animated.View>
-}
         <VirtualizedList
           ref={imageList}
           data={images}
@@ -160,6 +149,17 @@ function ImageViewing({
               : imageSrc.uri
           }
         />
+        {showComponents &&
+          <Animated.View style={[styles.header, { transform: headerTransform }]}>
+            {typeof HeaderComponent !== "undefined" ? (
+              React.createElement(HeaderComponent, {
+                imageIndex: currentImageIndex,
+              })
+            ) : (
+              <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
+            )}
+          </Animated.View>
+        }
         {typeof FooterComponent !== "undefined" && showComponents && (
           <Animated.View
             style={[styles.footer, { transform: footerTransform }]}

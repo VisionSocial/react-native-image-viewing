@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import React, { ComponentType } from "react";
+import React, { PropsWithChildren } from "react";
 import { ModalProps } from "react-native";
 import { ImageSource } from "./@types";
 declare type Props = {
@@ -22,12 +22,12 @@ declare type Props = {
     swipeToCloseEnabled?: boolean;
     doubleTapToZoomEnabled?: boolean;
     delayLongPress?: number;
-    HeaderComponent?: ComponentType<{
+    HeaderComponent?: ({ imageIndex }: PropsWithChildren<{
         imageIndex: number;
-    }>;
-    FooterComponent?: ComponentType<{
+    }>) => JSX.Element;
+    FooterComponent?: ({ imageIndex }: PropsWithChildren<{
         imageIndex: number;
-    }>;
+    }>) => JSX.Element;
     hideComponents?: boolean;
     children?: React.ReactNode;
 };
