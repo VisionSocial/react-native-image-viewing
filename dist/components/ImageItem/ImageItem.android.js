@@ -6,11 +6,16 @@
  *
  */
 import React, { useCallback, useRef, useState } from "react";
-import { TouchableWithoutFeedback, Animated, ScrollView, Dimensions, StyleSheet, } from "react-native";
+import { TouchableWithoutFeedback, Animated, ScrollView, Dimensions, StyleSheet, TouchableOpacity, } from "react-native";
+// @ts-ignore
+import VideoPlayer from "react-native-video-controls";
 import useImageDimensions from "../../hooks/useImageDimensions";
 import usePanResponder from "../../hooks/usePanResponder";
 import { getImageStyles, getImageTransform } from "../../utils";
 import { ImageLoading } from "./ImageLoading";
+import VideoIcon from "../videoIcon";
+import { Modal } from "react-native";
+import { View } from "react-native";
 const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.75;
 const SCREEN = Dimensions.get("window");
@@ -22,6 +27,7 @@ const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPre
     const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
     const scrollValueY = new Animated.Value(0);
     const [isLoaded, setLoadEnd] = useState(false);
+    const [showVideo, setShowVideo] = useState(false);
     const onLoaded = useCallback(() => setLoadEnd(true), []);
     const onZoomPerformed = useCallback((isZoomed) => {
         var _a;
@@ -69,11 +75,26 @@ const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPre
         onScroll,
         onScrollEndDrag,
     })}>
-      <TouchableWithoutFeedback onPress={() => setShowComponents && setShowComponents((showComponents) => !showComponents)}>
-      <Animated.Image 
+      {imageSrc.thumbnail ? (<TouchableOpacity onPress={() => setShowVideo(true)} style={styles.videoIcon}>
+            <VideoIcon width={100} height={100}/>
+          </TouchableOpacity>) : null} 
+      <TouchableWithoutFeedback onPress={() => setShowComponents && setShowComponents((showComponents) => !showComponents)} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
+        <View style={{ flex: 1 }}>
+          <Modal visible={showVideo} transparent={true}>
+              <VideoPlayer onBack={() => setShowVideo(false)} fullscreen={true} isFullScreen={true} onExitFullscreen={() => setShowVideo(false)} playWhenInactive={false} playInBackground={false} onFullscreenPlayerDidDismiss={() => {
+        console.log("'At this point, I know the fullscreen viewer is closing and my video will be paused, but I'm assuming the side effect rather than using an event.'");
+    }} fullscreenOrientation="all" source={{
+        uri: imageSrc.uri
+    }} style={styles.listItem} onReadyForDisplay={onLoaded}/>
+          </Modal>
+          <Animated.Image 
+    // For Android, we use PanResponder to handle double tap to zoom
+    // For this moment, zoom on Android is not supported
     // {...panHandlers}
     source={imageSrc} style={imageStylesWithOpacity} onLoad={onLoaded}/>
+          </View>
       </TouchableWithoutFeedback>
+
       {(!isLoaded || !imageDimensions) && <ImageLoading />}
     </ScrollView>);
 };
@@ -84,6 +105,12 @@ const styles = StyleSheet.create({
     },
     imageScrollContainer: {
         height: SCREEN_HEIGHT * 2,
+    },
+    videoIcon: {
+        top: "40%",
+        zIndex: 10,
+        alignSelf: "center",
+        position: "absolute",
     },
 });
 export default React.memo(ImageItem);

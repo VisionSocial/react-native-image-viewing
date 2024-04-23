@@ -18,14 +18,17 @@ import {
   NativeSyntheticEvent,
   TouchableWithoutFeedback,
   GestureResponderEvent,
+  TouchableOpacity,
+  Modal,
 } from "react-native";
-
+import VideoPlayer from "react-native-video-controls";
 import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
 import useImageDimensions from "../../hooks/useImageDimensions";
 
 import { getImageStyles, getImageTransform } from "../../utils";
 import { ImageSource } from "../../@types";
 import { ImageLoading } from "./ImageLoading";
+import VideoIcon from "../videoIcon";
 
 const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.55;
@@ -57,6 +60,7 @@ const ImageItem = ({
   const scrollViewRef = useRef<ScrollView>(null);
   const [loaded, setLoaded] = useState(false);
   const [scaled, setScaled] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
   const imageDimensions = useImageDimensions(imageSrc);
   const handleDoubleTap = useDoubleTapToZoom(scrollViewRef, scaled, SCREEN, setShowComponents);
 
@@ -133,17 +137,49 @@ const ImageItem = ({
         })}
       >
         {(!loaded || !imageDimensions) && <ImageLoading />}
-        <TouchableWithoutFeedback
-          onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined}
-          onLongPress={onLongPressHandler}
-          delayLongPress={delayLongPress}
-        >
+
+        {imageSrc.thumbnail ? (
+          <TouchableOpacity
+            onPress={() => setShowVideo(true)}
+            style={styles.videoIcon}
+          >
+            <VideoIcon width={100} height={100} />
+          </TouchableOpacity>
+        ) : null}
+      <TouchableWithoutFeedback
+        onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined}
+        onLongPress={onLongPressHandler}
+        delayLongPress={delayLongPress}
+      >
+          <View style={{ flex: 1 }}>
+          <Modal visible={showVideo} transparent={true}>
+              <VideoPlayer
+                onBack={() => setShowVideo(false)}
+                fullscreen={true}
+                isFullScreen={true}
+                onExitFullscreen={() => setShowVideo(false)}
+                playWhenInactive={false}
+                playInBackground={false}
+                onFullscreenPlayerDidDismiss={() => {
+                  console.log(
+                    "'At this point, I know the fullscreen viewer is closing and my video will be paused, but I'm assuming the side effect rather than using an event.'"
+                  );
+                }}
+                fullscreenOrientation="all"
+                source={{
+                  uri: imageSrc.uri
+                }}
+                style={styles.listItem}
+                onReadyForDisplay={() => setLoaded(true)}
+              />
+          </Modal>
           <Animated.Image
             source={imageSrc}
             style={imageStylesWithOpacity}
             onLoad={() => setLoaded(true)}
           />
-        </TouchableWithoutFeedback>
+          </View>
+      </TouchableWithoutFeedback>
       </ScrollView>
     </View>
   );
@@ -156,6 +192,12 @@ const styles = StyleSheet.create({
   },
   imageScrollContainer: {
     height: SCREEN_HEIGHT,
+  },
+  videoIcon: {
+        top: "40%",
+        zIndex: 10,
+        alignSelf: "center",
+        position: "absolute",
   },
 });
 
