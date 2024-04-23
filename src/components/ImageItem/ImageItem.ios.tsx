@@ -143,7 +143,7 @@ const ImageItem = ({
             onPress={() => setShowVideo(true)}
             style={styles.videoIcon}
           >
-            <VideoIcon width={100} height={100} />
+            <VideoIcon width={80} height={80} />
           </TouchableOpacity>
         ) : null}
       <TouchableWithoutFeedback
@@ -194,10 +194,10 @@ const styles = StyleSheet.create({
     height: SCREEN_HEIGHT,
   },
   videoIcon: {
-        top: "40%",
-        zIndex: 10,
-        alignSelf: "center",
-        position: "absolute",
+    top: SCREEN_HEIGHT / 2 - 40,
+    zIndex: 10,
+    alignSelf: "center",
+    position: "absolute",
   },
 });
 

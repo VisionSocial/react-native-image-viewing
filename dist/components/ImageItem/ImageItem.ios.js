@@ -67,7 +67,7 @@ const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPre
         {(!loaded || !imageDimensions) && <ImageLoading />}
 
         {imageSrc.thumbnail ? (<TouchableOpacity onPress={() => setShowVideo(true)} style={styles.videoIcon}>
-            <VideoIcon width={100} height={100}/>
+            <VideoIcon width={80} height={80}/>
           </TouchableOpacity>) : null}
       <TouchableWithoutFeedback onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
           <View style={{ flex: 1 }}>
@@ -93,10 +93,10 @@ const styles = StyleSheet.create({
         height: SCREEN_HEIGHT,
     },
     videoIcon: {
-        top: "40%",
+        top: SCREEN_HEIGHT / 2 - 40,
         zIndex: 10,
         alignSelf: "center",
         position: "absolute",
-    },
+      },
 });
 export default React.memo(ImageItem);
