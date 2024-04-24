@@ -15,5 +15,5 @@ export declare type Position = {
 };
 export declare type ImageSource = {
     uri: string;
-    thumbnail?: string;
+    video?: string;
 };

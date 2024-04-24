@@ -138,7 +138,7 @@ const ImageItem = ({
       >
         {(!loaded || !imageDimensions) && <ImageLoading />}
 
-        {imageSrc.thumbnail ? (
+        {imageSrc.video ? (
           <TouchableOpacity
             onPress={() => setShowVideo(true)}
             style={styles.videoIcon}
@@ -167,14 +167,14 @@ const ImageItem = ({
                 }}
                 fullscreenOrientation="all"
                 source={{
-                  uri: imageSrc.uri
+                  uri: imageSrc.video
                 }}
                 style={styles.listItem}
                 onReadyForDisplay={() => setLoaded(true)}
               />
           </Modal>
           <Animated.Image
-            source={imageSrc}
+            source={{uri: imageSrc.uri}}
             style={imageStylesWithOpacity}
             onLoad={() => setLoaded(true)}
           />

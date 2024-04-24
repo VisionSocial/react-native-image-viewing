@@ -20,5 +20,5 @@ export type Position = {
 
 export type ImageSource = {
   uri: string;
-  thumbnail?: string;
+  video?: string;
 };

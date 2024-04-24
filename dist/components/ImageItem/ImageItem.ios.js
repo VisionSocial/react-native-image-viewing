@@ -66,7 +66,7 @@ const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPre
     })}>
         {(!loaded || !imageDimensions) && <ImageLoading />}
 
-        {imageSrc.thumbnail ? (<TouchableOpacity onPress={() => setShowVideo(true)} style={styles.videoIcon}>
+        {imageSrc.video ? (<TouchableOpacity onPress={() => setShowVideo(true)} style={styles.videoIcon}>
             <VideoIcon width={80} height={80}/>
           </TouchableOpacity>) : null}
       <TouchableWithoutFeedback onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined} onLongPress={onLongPressHandler} delayLongPress={delayLongPress}>
@@ -75,10 +75,10 @@ const ImageItem = ({ imageSrc, onZoom, onRequestClose, onLongPress, delayLongPre
               <VideoPlayer onBack={() => setShowVideo(false)} fullscreen={true} isFullScreen={true} onExitFullscreen={() => setShowVideo(false)} playWhenInactive={false} playInBackground={false} onFullscreenPlayerDidDismiss={() => {
         console.log("'At this point, I know the fullscreen viewer is closing and my video will be paused, but I'm assuming the side effect rather than using an event.'");
     }} fullscreenOrientation="all" source={{
-        uri: imageSrc.uri
+        uri: imageSrc.video
     }} style={styles.listItem} onReadyForDisplay={() => setLoaded(true)}/>
           </Modal>
-          <Animated.Image source={imageSrc} style={imageStylesWithOpacity} onLoad={() => setLoaded(true)}/>
+          <Animated.Image source={{uri: imageSrc.uri}} style={imageStylesWithOpacity} onLoad={() => setLoaded(true)}/>
           </View>
       </TouchableWithoutFeedback>
       </ScrollView>

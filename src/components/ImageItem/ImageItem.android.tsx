@@ -140,7 +140,7 @@ const ImageItem = ({
         onScrollEndDrag,
       })}
     >
-      {imageSrc.thumbnail ? (
+      {imageSrc.video ? (
           <TouchableOpacity
             onPress={() => setShowVideo(true)}
             style={styles.videoIcon}
@@ -169,7 +169,7 @@ const ImageItem = ({
                 }}
                 fullscreenOrientation="all"
                 source={{
-                  uri: imageSrc.uri
+                  uri: imageSrc.video
                 }}
                 style={styles.listItem}
                 onReadyForDisplay={onLoaded}
@@ -180,7 +180,7 @@ const ImageItem = ({
             // For this moment, zoom on Android is not supported
             
             // {...panHandlers}
-            source={imageSrc} 
+            source={{uri: imageSrc.uri}} 
             style={imageStylesWithOpacity} 
             onLoad={onLoaded}
           />
